@@ -31,7 +31,7 @@ fun AppNavHost(
             LoginScreen(navController)
         }
         composable(NavigationItem.Register.route) {
-            RegisterScreen()
+            RegisterScreen(navController)
         }
         composable(NavigationItem.GroceryList.route) {
             GroceryListScreen()

@@ -21,9 +21,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import com.neu.mobileapplicationdevelopment202430.R
 import com.neu.mobileapplicationdevelopment202430.navigation.NavigationItem
 
 @Composable
@@ -46,7 +48,7 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginVM = viewModel
     ) {
         Text(
             text = "My Grocery App",
-            fontSize = 24.sp,
+            fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -78,13 +80,15 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginVM = viewModel
         }) {
             Text("login")
         }
-        Spacer(modifier = Modifier.height(8.dp))
+
         Text(
             text = "sign up",
-            color = Color.Blue,
+            color = colorResource(id = R.color.purple_700),
             fontSize = 16.sp,
             textDecoration = TextDecoration.Underline,
-            modifier = Modifier.clickable {
+            modifier = Modifier
+                .padding(top = 12.dp, bottom = 6.dp)
+                .clickable {
                 navController.navigate(NavigationItem.Register.route)
             }
         )
