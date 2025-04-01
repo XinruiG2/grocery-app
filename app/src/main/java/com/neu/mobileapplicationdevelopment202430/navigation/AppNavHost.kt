@@ -34,19 +34,19 @@ fun AppNavHost(
             RegisterScreen(navController)
         }
         composable(NavigationItem.GroceryList.route) {
-            GroceryListScreen()
+            GroceryListScreen(navController)
         }
         composable(NavigationItem.Ingredients.route) {
-            IngredientsScreen()
+            IngredientsScreen(navController)
         }
         composable(NavigationItem.Reminders.route) {
-            RemindersScreen()
+            RemindersScreen(navController)
         }
         composable(NavigationItem.Fridge.route) {
-            FridgeScreen()
+            FridgeScreen(navController)
         }
         composable(NavigationItem.Recipes.route) {
-            RecipesScreen()
+            RecipesScreen(navController)
         }
     }
 }

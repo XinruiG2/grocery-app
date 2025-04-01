@@ -7,18 +7,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 @Composable
-fun RecipesScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+fun RecipesScreen(navController: NavHostController) {
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            text = "Recipes",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Recipes",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
