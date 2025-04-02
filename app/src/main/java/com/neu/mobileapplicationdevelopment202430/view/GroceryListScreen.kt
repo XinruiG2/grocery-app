@@ -29,6 +29,13 @@ fun GroceryListScreen(navController: NavHostController) {
         )
     }
     var checkedItems by remember { mutableStateOf(setOf<GroceryListItem>()) }
+    var showAddItemPopup by remember { mutableStateOf(false) }
+    var selectedItemName by remember { mutableStateOf("Carrots") }
+    var selectedItemQuantity by remember { mutableStateOf(1) }
+
+    // maybe replace later, get db's ingredients
+    val itemOptions = listOf("Carrots", "Eggs", "Tomatoes", "Strawberries", "Milk")
+    val quantityOptions = (1..50).toList() //m should this be constant or an api call??
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -103,9 +110,9 @@ fun GroceryListScreen(navController: NavHostController) {
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Button(
-                        onClick = {}
+                        onClick = { showAddItemPopup = true }
                     ) {
-                        Text(text = "add items to list")
+                        Text(text = "add item to list")
                     }
                     Button(
                         onClick = {}
@@ -118,4 +125,70 @@ fun GroceryListScreen(navController: NavHostController) {
 
         FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
+
+    if (showAddItemPopup) {
+        AlertDialog(
+            onDismissRequest = { showAddItemPopup = false },
+            title = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "",
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+            },
+            text = {
+                Column {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row (modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Select an item:")
+                        Spacer(modifier = Modifier.width(3.dp))
+                        DropDown(
+                            options = itemOptions,
+                            selectedOption = selectedItemName,
+                            onOptionSelected = { selectedItemName = it }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row (modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Select quantity:")
+                        Spacer(modifier = Modifier.width(3.dp))
+                        DropDown(
+                            options = quantityOptions.map { it.toString() },
+                            selectedOption = selectedItemQuantity.toString(),
+                            onOptionSelected = { selectedItemQuantity = it.toInt() }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    modifier = Modifier.padding(end = 15.dp, bottom = 9.dp),
+                    onClick = {
+                        groceryItems = groceryItems + GroceryListItem(selectedItemName, selectedItemQuantity)
+                        showAddItemPopup = false
+                    }
+                ) {
+                    Text("Add to List")
+                }
+            },
+            dismissButton = {
+                Button(modifier = Modifier.padding(bottom = 9.dp), onClick = { showAddItemPopup = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
 }
