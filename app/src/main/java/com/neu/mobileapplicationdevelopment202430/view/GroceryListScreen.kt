@@ -94,26 +94,23 @@ fun GroceryListScreen(navController: NavHostController) {
                     }
                 }
 
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .weight(1f)
                         .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.height(20.dp))
                     Button(
                         onClick = {}
                     ) {
-                        Text(text = "Add to Fridge")
+                        Text(text = "add items to list")
                     }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "add item to list",
-                            tint = Color.Black
-                        )
+                    Button(
+                        onClick = {}
+                    ) {
+                        Text(text = "add items to fridge")
                     }
                 }
             }
