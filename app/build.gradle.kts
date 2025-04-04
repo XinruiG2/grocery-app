@@ -124,6 +124,7 @@ dependencies {
   implementation ("androidx.paging:paging-runtime-ktx:3.3.5")
   implementation ("androidx.paging:paging-compose:3.3.5")
 
+  implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
   // Dependencies for local unit tests
   testImplementation("junit:junit:4.13.2")

@@ -25,7 +25,7 @@ fun FooterNavigation(navController: NavHostController, modifier: Modifier = Modi
     BottomAppBar(
         backgroundColor = Color.White,
         contentColor = Color.Black,
-        modifier = modifier
+        modifier = modifier.height(56.dp)
     ) {
         Row(
             modifier = Modifier
