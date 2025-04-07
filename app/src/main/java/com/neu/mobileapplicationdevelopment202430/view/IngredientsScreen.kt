@@ -5,29 +5,37 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
+import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
+import com.neu.mobileapplicationdevelopment202430.model.VMCreator
+import com.neu.mobileapplicationdevelopment202430.viewmodel.IngredientsVM
 
 @Composable
 fun IngredientsScreen(navController: NavHostController) {
-    var ingredients by remember {
-        mutableStateOf(
-            listOf(
-                IngredientItem("Apple", 4, 0, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                IngredientItem("Egg", 7, 1, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                IngredientItem("Pasta", 30, 2, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                IngredientItem("Strawberries", 3, 2, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                IngredientItem("Milk", 7, 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg")
-            )
-        )
+
+    val context = LocalContext.current
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao())
+    val ingredientsVM: IngredientsVM = viewModel(factory = VMCreator(foodRepository))
+    val ingredients by ingredientsVM.ingredients.observeAsState(emptyList())
+    val isLoading by ingredientsVM.isLoading.observeAsState()
+
+    LaunchedEffect(Unit) {
+        ingredientsVM.loadProducts()
     }
 
     Box(
@@ -59,7 +67,7 @@ fun IngredientsScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(ingredients) { ingredient ->
+                items(ingredients ?: emptyList()) { ingredient ->
                     IngredientItemCard(item = ingredient)
                 }
             }
