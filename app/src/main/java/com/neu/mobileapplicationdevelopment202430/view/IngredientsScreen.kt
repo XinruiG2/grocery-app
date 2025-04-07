@@ -33,6 +33,7 @@ fun IngredientsScreen(navController: NavHostController) {
     val ingredientsVM: IngredientsVM = viewModel(factory = VMCreator(foodRepository))
     val ingredients by ingredientsVM.ingredients.observeAsState(emptyList())
     val isLoading by ingredientsVM.isLoading.observeAsState()
+    val errorMessage by ingredientsVM.errorMessage.observeAsState()
 
     LaunchedEffect(Unit) {
         ingredientsVM.loadProducts()
@@ -66,9 +67,28 @@ fun IngredientsScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(ingredients ?: emptyList()) { ingredient ->
-                    IngredientItemCard(item = ingredient)
+            if (isLoading == true) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            } else if (errorMessage != null) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = errorMessage!!,
+                        color = Color.Black,
+                        fontSize = 22.sp,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(ingredients ?: emptyList()) { ingredient ->
+                        IngredientItemCard(item = ingredient)
+                    }
                 }
             }
         }

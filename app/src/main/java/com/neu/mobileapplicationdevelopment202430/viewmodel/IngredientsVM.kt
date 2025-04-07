@@ -20,9 +20,12 @@ class IngredientsVM(private val repository: FoodRepository) : ViewModel() {
     val ingredients: LiveData<List<IngredientItem>?> get() = _ingredients
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> get() = _errorMessage
 
     fun loadProducts() {
         _isLoading.value = true
+        _errorMessage.value = null
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -42,6 +45,7 @@ class IngredientsVM(private val repository: FoodRepository) : ViewModel() {
                         _ingredients.value = storedIngredients
                     } else {
                         // should we show the error message?
+                        _errorMessage.value = "Ingredients unavailable right now"
                     }
                 }
             } finally {
