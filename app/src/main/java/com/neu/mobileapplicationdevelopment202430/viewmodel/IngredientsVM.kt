@@ -28,13 +28,22 @@ class IngredientsVM(private val repository: FoodRepository) : ViewModel() {
             try {
                 val apiIngredients = repository.getIngredientsFromApi()
                 if (apiIngredients.isNotEmpty()) {
-                    //save to db
+                    repository.saveIngredientsToDatabase(apiIngredients)
                     withContext(Dispatchers.Main) {
                         _ingredients.value = apiIngredients
                     }
                 }
             } catch (e: Exception) {
                 Log.e("IngredientsVM", "FOUND AN ERROR!: ${e.message}")
+
+                val storedIngredients = repository.getIngredientsFromDatabase()
+                withContext(Dispatchers.Main) {
+                    if (!storedIngredients.isNullOrEmpty()) {
+                        _ingredients.value = storedIngredients
+                    } else {
+                        // should we show the error message?
+                    }
+                }
             } finally {
                 withContext(Dispatchers.Main) {
                     _isLoading.value = false

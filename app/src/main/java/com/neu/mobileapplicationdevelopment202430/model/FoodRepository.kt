@@ -2,11 +2,12 @@ package com.neu.mobileapplicationdevelopment202430.model
 
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlin.collections.map
 
-class FoodRepository(private val productDao: FoodDao) {
-    val ingredients: Flow<List<IngredientItem>> = productDao.getAllIngredients()
+class FoodRepository(private val foodDao: FoodDao) {
+    val ingredients: Flow<List<IngredientItem>> = foodDao.getAllIngredients()
         .map { entityList -> entityList.map { it.toIngredient() } }
 
     suspend fun getIngredientsFromApi(): List<IngredientItem> {
@@ -20,6 +21,27 @@ class FoodRepository(private val productDao: FoodDao) {
             }
             Log.e("FoodRepository", "Error: ${response.message()}")
             throw Exception("Error: ${response.message()}")
+        }
+    }
+
+    suspend fun saveIngredientsToDatabase(ingredients: List<IngredientItem>) {
+        val entities = ingredients.map { it.toEntity() }
+        foodDao.insertIngredients(entities)
+    }
+
+    suspend fun getIngredientsFromDatabase(): List<IngredientItem>? {
+        try {
+            val ingredientEntities = foodDao.getAllIngredients().firstOrNull()
+            Log.d("Food Repository", "Fetched: $ingredientEntities")
+
+            if (ingredientEntities.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return ingredientEntities.map { it.toIngredient() }
+        } catch (e: Exception) {
+            Log.e("Food Repository", "Error: ${e.message}")
+            return emptyList()
         }
     }
 

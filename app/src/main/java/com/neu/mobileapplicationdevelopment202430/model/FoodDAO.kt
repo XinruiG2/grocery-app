@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import com.neu.mobileapplicationdevelopment202430.model.IngredientEntity
 
 @Dao
 interface FoodDao {
@@ -14,4 +15,7 @@ interface FoodDao {
 
     @Query("SELECT * FROM ingredients")
     fun getAllIngredients(): Flow<List<IngredientEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertIngredients(ingredients: List<IngredientEntity>)
 }
