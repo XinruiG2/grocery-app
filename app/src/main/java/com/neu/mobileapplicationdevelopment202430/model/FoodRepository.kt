@@ -9,11 +9,13 @@ import kotlin.collections.map
 class FoodRepository(private val foodDao: FoodDao) {
     val ingredients: Flow<List<IngredientItem>> = foodDao.getAllIngredients()
         .map { entityList -> entityList.map { it.toIngredient() } }
+    val recipes: Flow<List<RecipeItem>> = foodDao.getAllRecipes()
+        .map { entityList -> entityList.map { it.toRecipe() } }
 
     suspend fun getIngredientsFromApi(): List<IngredientItem> {
         val response = MyRetrofitBuilder.getApiService().getIngredients()
         if (response.isSuccessful) {
-            Log.d("FoodRepository", "Response Body: ${response.body()}")
+            Log.d("FoodRepository Ingredients", "Response Body: ${response.body()}")
             return response.body()?.map { it.toIngredient() } ?: emptyList()
         } else {
             response.errorBody()?.let {
@@ -39,6 +41,41 @@ class FoodRepository(private val foodDao: FoodDao) {
             }
 
             return ingredientEntities.map { it.toIngredient() }
+        } catch (e: Exception) {
+            Log.e("Food Repository", "Error: ${e.message}")
+            return emptyList()
+        }
+    }
+
+    suspend fun getRecipesFromApi(): List<RecipeItem> {
+        val response = MyRetrofitBuilder.getApiService().getRecipes()
+        if (response.isSuccessful) {
+            Log.d("FoodRepository Recipes", "Response Body: ${response.body()}")
+            return response.body()?.map { it.toRecipe() } ?: emptyList()
+        } else {
+            response.errorBody()?.let {
+                Log.e("FoodRepository", "Error Body: ${it.string()}")
+            }
+            Log.e("FoodRepository", "Error: ${response.message()}")
+            throw Exception("Error: ${response.message()}")
+        }
+    }
+
+    suspend fun saveRecipesToDatabase(recipes: List<RecipeItem>) {
+        val entities = recipes.map { it.toEntity() }
+        foodDao.insertRecipes(entities)
+    }
+
+    suspend fun getRecipesFromDatabase(): List<RecipeItem>? {
+        try {
+            val recipeEntities = foodDao.getAllRecipes().firstOrNull()
+            Log.d("Food Repository", "Fetched: $recipeEntities")
+
+            if (recipeEntities.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return recipeEntities.map { it.toRecipe() }
         } catch (e: Exception) {
             Log.e("Food Repository", "Error: ${e.message}")
             return emptyList()

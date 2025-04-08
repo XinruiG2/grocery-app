@@ -12,3 +12,16 @@ fun IngredientItem.toEntity(): IngredientEntity {
         imageUrl = this.imageUrl
     )
 }
+
+fun RecipeEntity.toRecipe(): RecipeItem {
+    return RecipeItem(this.name, this.description, this.ingredients, this.imageUrl)
+}
+
+fun RecipeItem.toEntity(): RecipeEntity {
+    return RecipeEntity(
+        name = this.name,
+        description = this.description,
+        ingredients = this.ingredients,
+        imageUrl = this.imageUrl
+    )
+}

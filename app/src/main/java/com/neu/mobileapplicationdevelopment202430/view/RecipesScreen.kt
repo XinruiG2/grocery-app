@@ -4,26 +4,45 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
+import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 import com.neu.mobileapplicationdevelopment202430.model.RecipeItem
+import com.neu.mobileapplicationdevelopment202430.model.RecipesVMCreator
+import com.neu.mobileapplicationdevelopment202430.viewmodel.IngredientsVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.RecipeVM
 
 @Composable
 fun RecipesScreen(navController: NavHostController) {
     var searchBarText by remember { mutableStateOf("") }
     var expandRecipe by remember { mutableStateOf<RecipeItem?>(null) }
-    val recipes = listOf(
-        RecipeItem("Pasta", "Pasta with tomato sauce.", "pasta, tomato, garlic, basil", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-        RecipeItem("Omelette", "Veggie omelette with cheese.", "egg, cheese, oil, spinach", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-        RecipeItem("Smoothie", "Berry smoothie.", "strawberries, blueberries, banana, milk", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg")
-    )
+//    val recipes = listOf(
+//        RecipeItem("Pasta", "Pasta with tomato sauce.", "pasta, tomato, garlic, basil", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//        RecipeItem("Omelette", "Veggie omelette with cheese.", "egg, cheese, oil, spinach", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//        RecipeItem("Smoothie", "Berry smoothie.", "strawberries, blueberries, banana, milk", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg")
+//    )
+
+    val context = LocalContext.current
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao())
+    val recipesVM: RecipeVM = viewModel(factory = RecipesVMCreator(foodRepository))
+    val recipes by recipesVM.recipes.observeAsState(emptyList())
+    val isLoading by recipesVM.isLoading.observeAsState()
+    val errorMessage by recipesVM.errorMessage.observeAsState()
+
+    LaunchedEffect(Unit) {
+        recipesVM.loadRecipes()
+    }
 
     val filteredRecipes = remember(searchBarText, recipes) {
         if (searchBarText.isBlank()) {
@@ -34,7 +53,7 @@ fun RecipesScreen(navController: NavHostController) {
                 .map { it.trim() }
                 .filter { it.isNotEmpty() }
 
-            recipes.filter { recipe ->
+            recipes?.filter { recipe ->
                 searchIngredients.any { ing ->
                     recipe.ingredients.lowercase().contains(ing)
                 }
@@ -84,7 +103,7 @@ fun RecipesScreen(navController: NavHostController) {
                         .padding(vertical = 5.dp, horizontal = 8.dp)
                 )
                 LazyColumn {
-                    items(filteredRecipes) { recipe ->
+                    items(filteredRecipes ?: emptyList()) { recipe ->
                         RecipeItemCard(
                             item = recipe,
                             onReadMore = {

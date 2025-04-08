@@ -22,7 +22,7 @@ import androidx.navigation.NavHostController
 import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
-import com.neu.mobileapplicationdevelopment202430.model.VMCreator
+import com.neu.mobileapplicationdevelopment202430.model.IngredientsVMCreator
 import com.neu.mobileapplicationdevelopment202430.viewmodel.IngredientsVM
 
 @Composable
@@ -30,13 +30,13 @@ fun IngredientsScreen(navController: NavHostController) {
 
     val context = LocalContext.current
     val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao())
-    val ingredientsVM: IngredientsVM = viewModel(factory = VMCreator(foodRepository))
+    val ingredientsVM: IngredientsVM = viewModel(factory = IngredientsVMCreator(foodRepository))
     val ingredients by ingredientsVM.ingredients.observeAsState(emptyList())
     val isLoading by ingredientsVM.isLoading.observeAsState()
     val errorMessage by ingredientsVM.errorMessage.observeAsState()
 
     LaunchedEffect(Unit) {
-        ingredientsVM.loadProducts()
+        ingredientsVM.loadIngredients()
     }
 
     Box(

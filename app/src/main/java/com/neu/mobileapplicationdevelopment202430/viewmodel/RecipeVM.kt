@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.reflect.TypeToken
 import com.google.gson.Gson
-import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
+import com.neu.mobileapplicationdevelopment202430.model.RecipeItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,37 +15,37 @@ import android.util.Log
 import kotlinx.coroutines.withContext
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 
-class IngredientsVM(private val repository: FoodRepository) : ViewModel() {
-    private val _ingredients = MutableLiveData<List<IngredientItem>?>(emptyList())
-    val ingredients: LiveData<List<IngredientItem>?> get() = _ingredients
+class RecipeVM(private val repository: FoodRepository) : ViewModel() {
+    private val _recipes = MutableLiveData<List<RecipeItem>?>(emptyList())
+    val recipes: LiveData<List<RecipeItem>?> get() = _recipes
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
-    fun loadIngredients() {
+    fun loadRecipes() {
         _isLoading.value = true
         _errorMessage.value = null
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val apiIngredients = repository.getIngredientsFromApi()
-                if (apiIngredients.isNotEmpty()) {
-                    repository.saveIngredientsToDatabase(apiIngredients)
+                val apiRecipes = repository.getRecipesFromApi()
+                if (apiRecipes.isNotEmpty()) {
+                    repository.saveRecipesToDatabase(apiRecipes)
                     withContext(Dispatchers.Main) {
-                        _ingredients.value = apiIngredients
+                        _recipes.value = apiRecipes
                     }
                 }
             } catch (e: Exception) {
                 Log.e("IngredientsVM", "FOUND AN ERROR!: ${e.message}")
 
-                val storedIngredients = repository.getIngredientsFromDatabase()
+                val storedRecipes = repository.getRecipesFromDatabase()
                 withContext(Dispatchers.Main) {
-                    if (!storedIngredients.isNullOrEmpty()) {
-                        _ingredients.value = storedIngredients
+                    if (!storedRecipes.isNullOrEmpty()) {
+                        _recipes.value = storedRecipes
                     } else {
                         // should we show the error message?
-                        _errorMessage.value = "Ingredients unavailable right now"
+                        _errorMessage.value = "Recipes unavailable right now"
                     }
                 }
             } finally {

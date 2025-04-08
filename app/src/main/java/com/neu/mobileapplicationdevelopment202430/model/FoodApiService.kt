@@ -7,4 +7,7 @@ import retrofit2.Response
 interface FoodApiService {
     @GET("getIngredients")
     suspend fun getIngredients(): Response<List<IngredientEntity>>
+
+    @GET("getRecipes")
+    suspend fun getRecipes(): Response<List<RecipeEntity>>
 }
