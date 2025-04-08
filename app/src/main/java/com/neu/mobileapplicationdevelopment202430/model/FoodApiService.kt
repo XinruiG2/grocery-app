@@ -3,6 +3,8 @@ package com.neu.mobileapplicationdevelopment202430.model
 import retrofit2.http.Query
 import retrofit2.http.GET
 import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 interface FoodApiService {
     @GET("getIngredients")
@@ -10,4 +12,10 @@ interface FoodApiService {
 
     @GET("getRecipes")
     suspend fun getRecipes(): Response<List<RecipeEntity>>
+
+    @POST("login")
+    suspend fun login(@Body user: UserEntity): Response<LoginResponse>
+
+    @POST("signup")
+    suspend fun signup(@Body user: UserEntity): Response<SignupResponse>
 }

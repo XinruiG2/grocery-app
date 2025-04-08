@@ -89,27 +89,46 @@ fun RecipesScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(3.dp))
 
-            expandRecipe?.let { recipe ->
-                ExpandedRecipeCard(recipe) {
-                    expandRecipe = null
+            if (isLoading == true) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-            } ?: run {
-                OutlinedTextField(
-                    value = searchBarText,
-                    onValueChange = { searchBarText = it },
-                    label = { Text("Ingredients separated by commas") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 5.dp, horizontal = 8.dp)
-                )
-                LazyColumn {
-                    items(filteredRecipes ?: emptyList()) { recipe ->
-                        RecipeItemCard(
-                            item = recipe,
-                            onReadMore = {
-                                expandRecipe = it
-                            }
-                        )
+            } else if (errorMessage != null) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = errorMessage!!,
+                        color = Color.Black,
+                        fontSize = 22.sp,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
+                expandRecipe?.let { recipe ->
+                    ExpandedRecipeCard(recipe) {
+                        expandRecipe = null
+                    }
+                } ?: run {
+                    OutlinedTextField(
+                        value = searchBarText,
+                        onValueChange = { searchBarText = it },
+                        label = { Text("Ingredients separated by commas") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 5.dp, horizontal = 8.dp)
+                    )
+                    LazyColumn {
+                        items(filteredRecipes ?: emptyList()) { recipe ->
+                            RecipeItemCard(
+                                item = recipe,
+                                onReadMore = {
+                                    expandRecipe = it
+                                }
+                            )
+                        }
                     }
                 }
             }

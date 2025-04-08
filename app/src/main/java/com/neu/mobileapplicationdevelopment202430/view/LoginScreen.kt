@@ -26,82 +26,98 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import com.neu.mobileapplicationdevelopment202430.R
+import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
+import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
+import com.neu.mobileapplicationdevelopment202430.model.LoginVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.RecipesVMCreator
 import com.neu.mobileapplicationdevelopment202430.navigation.NavigationItem
+import com.neu.mobileapplicationdevelopment202430.viewmodel.RecipeVM
 
 @Composable
-fun LoginScreen(navController: NavHostController, viewModel: LoginVM = viewModel()) {
+fun LoginScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val loginStatus by viewModel.loginStatus.observeAsState()
     val context = LocalContext.current
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao())
+    val loginVM: LoginVM = viewModel(factory = LoginVMCreator(foodRepository))
+    val loginStatus by loginVM.loginStatus.observeAsState()
+    val isLoading by loginVM.isLoading.observeAsState()
+    val errorMessage by loginVM.errorMessage.observeAsState()
 
     BackHandler {
         (context as? Activity)?.finish()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "My Grocery App",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("username") },
-            modifier = Modifier.fillMaxWidth(0.93f),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xFF800080),
-                unfocusedBorderColor = Color.Gray
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(0.93f),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xFF800080),
-                unfocusedBorderColor = Color.Gray
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            viewModel.validUserOrNot(username, password)
-        }) {
-            Text("login")
+    if (isLoading == true) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-
-        Text(
-            text = "sign up",
-            color = colorResource(id = R.color.purple_700),
-            fontSize = 16.sp,
-            textDecoration = TextDecoration.Underline,
+    } else {
+        Column(
             modifier = Modifier
-                .padding(top = 12.dp, bottom = 6.dp)
-                .clickable {
-                navController.navigate(NavigationItem.Register.route)
+                .fillMaxSize()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "My Grocery App",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("username") },
+                modifier = Modifier.fillMaxWidth(0.93f),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF800080),
+                    unfocusedBorderColor = Color.Gray
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("password") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(0.93f),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF800080),
+                    unfocusedBorderColor = Color.Gray
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                loginVM.validUserOrNot(username, password)
+            }) {
+                Text("login")
             }
-        )
 
-        val context = LocalContext.current
-        LaunchedEffect(loginStatus) {
-            loginStatus?.let { isValid ->
-                if (isValid) {
-                    navController.navigate(NavigationItem.Reminders.route)
-                } else {
-                    Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+            Text(
+                text = "sign up",
+                color = colorResource(id = R.color.purple_700),
+                fontSize = 16.sp,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier
+                    .padding(top = 12.dp, bottom = 6.dp)
+                    .clickable {
+                        navController.navigate(NavigationItem.Register.route)
+                    }
+            )
+
+            LaunchedEffect(loginStatus) {
+                loginStatus?.let { isValid ->
+                    if (isValid) {
+                        navController.navigate(NavigationItem.Reminders.route)
+                    } else {
+                        Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                    }
+                    loginVM.resetLoginStatus()
                 }
-                viewModel.resetLoginStatus()
             }
         }
     }
