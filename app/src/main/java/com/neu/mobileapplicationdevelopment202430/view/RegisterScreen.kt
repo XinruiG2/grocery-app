@@ -33,7 +33,7 @@ fun RegisterScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao())
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
     val registerVM: RegisterVM = viewModel(factory = RegisterVMCreator(foodRepository))
     val signupStatus by registerVM.signupStatus.observeAsState()
     val isLoading by registerVM.isLoading.observeAsState()

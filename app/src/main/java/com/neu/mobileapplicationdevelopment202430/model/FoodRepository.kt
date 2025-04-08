@@ -1,16 +1,18 @@
 package com.neu.mobileapplicationdevelopment202430.model
 
+import android.content.Context
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlin.collections.map
 
-class FoodRepository(private val foodDao: FoodDao) {
+class FoodRepository(private val foodDao: FoodDao, private val context: Context) {
     val ingredients: Flow<List<IngredientItem>> = foodDao.getAllIngredients()
         .map { entityList -> entityList.map { it.toIngredient() } }
     val recipes: Flow<List<RecipeItem>> = foodDao.getAllRecipes()
         .map { entityList -> entityList.map { it.toRecipe() } }
+    private val userInformation = UserInformation(context)
 
     suspend fun getIngredientsFromApi(): List<IngredientItem> {
         val response = MyRetrofitBuilder.getApiService().getIngredients()
@@ -85,22 +87,24 @@ class FoodRepository(private val foodDao: FoodDao) {
     suspend fun login(username: String, password: String): LoginResponse? {
         val user = UserEntity(username, password)
         val response = MyRetrofitBuilder.getApiService().login(user)
-        return if (response.isSuccessful) {
+        if (response.isSuccessful) {
             Log.d("Login in Repository", response.body().toString())
-            response.body()
+            response.body()?.user_id?.let { userInformation.saveUserId(it) }
+            return response.body()
         } else {
-            null
+            return null
         }
     }
 
     suspend fun signup(username: String, password: String): SignupResponse? {
         val user = UserEntity(username, password)
         val response = MyRetrofitBuilder.getApiService().signup(user)
-        return if (response.isSuccessful) {
+        if (response.isSuccessful) {
             Log.d("Login in Repository", response.body().toString())
-            response.body()
+            response.body()?.user_id?.let { userInformation.saveUserId(it) }
+            return response.body()
         } else {
-            null
+            return null
         }
     }
 

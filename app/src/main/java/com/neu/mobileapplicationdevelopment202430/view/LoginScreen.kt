@@ -38,7 +38,7 @@ fun LoginScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao())
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
     val loginVM: LoginVM = viewModel(factory = LoginVMCreator(foodRepository))
     val loginStatus by loginVM.loginStatus.observeAsState()
     val isLoading by loginVM.isLoading.observeAsState()

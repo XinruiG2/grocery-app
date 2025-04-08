@@ -29,7 +29,7 @@ import com.neu.mobileapplicationdevelopment202430.viewmodel.IngredientsVM
 fun IngredientsScreen(navController: NavHostController) {
 
     val context = LocalContext.current
-    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao())
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
     val ingredientsVM: IngredientsVM = viewModel(factory = IngredientsVMCreator(foodRepository))
     val ingredients by ingredientsVM.ingredients.observeAsState(emptyList())
     val isLoading by ingredientsVM.isLoading.observeAsState()

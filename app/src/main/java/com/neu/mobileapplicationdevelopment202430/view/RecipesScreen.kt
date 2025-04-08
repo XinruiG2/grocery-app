@@ -34,7 +34,7 @@ fun RecipesScreen(navController: NavHostController) {
 //    )
 
     val context = LocalContext.current
-    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao())
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
     val recipesVM: RecipeVM = viewModel(factory = RecipesVMCreator(foodRepository))
     val recipes by recipesVM.recipes.observeAsState(emptyList())
     val isLoading by recipesVM.isLoading.observeAsState()

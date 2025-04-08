@@ -13,8 +13,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.neu.mobileapplicationdevelopment202430.model.FridgeItem
+import com.neu.mobileapplicationdevelopment202430.model.UserInformation
 
 @Composable
 fun FridgeScreen(navController: NavHostController) {
@@ -29,6 +31,9 @@ fun FridgeScreen(navController: NavHostController) {
             )
         )
     }
+    val context = LocalContext.current
+    val userPreferences = UserInformation(context)
+    val userId = userPreferences.getUserId()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -58,6 +63,12 @@ fun FridgeScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
+//            Text(
+//                text = "user id test: ${userId}",
+//                fontSize = 24.sp,
+//                fontWeight = FontWeight.Bold
+//            )
+
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(items) { item ->
                     FridgeItemCard(
@@ -82,6 +93,7 @@ fun FridgeScreen(navController: NavHostController) {
                     )
                 }
             }
+
         }
 
         FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
