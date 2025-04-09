@@ -93,7 +93,7 @@ fun FridgeScreen(navController: NavHostController) {
                     FridgeItemCard(
                         item = item,
                         updateQuantity = { newQuantity ->
-                            fridgeVM.updateItemQuantity(item.name, newQuantity)
+                            fridgeVM.updateItemQuantity(userId, item.name, newQuantity)
 //                            if (newQuantity == 0) {
 //                                items = items.filterNot { it.name == item.name }
 //                            }

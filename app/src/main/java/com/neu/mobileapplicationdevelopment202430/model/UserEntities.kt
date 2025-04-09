@@ -22,3 +22,14 @@ data class FullUserEntity(
     val fridge_items: List<FridgeEntity>,
     val grocery_list: List<FridgeEntity>
 )
+
+data class FridgeItemUpdateForUserRequest(
+    val user_id: Int,
+    val name: String,
+    val quantity: Int
+)
+
+data class ApiResponse(
+    val message: String
+)
+

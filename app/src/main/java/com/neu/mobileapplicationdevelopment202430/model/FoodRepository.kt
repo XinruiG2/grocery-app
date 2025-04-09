@@ -142,8 +142,22 @@ class FoodRepository(private val foodDao: FoodDao, private val context: Context)
         foodDao.insertFridgeItems(entities)
     }
 
-    suspend fun updateFridgeItemQuantity(name: String, quantity: Int) {
+    suspend fun updateFridgeItemQuantity(userId: Int, name: String, quantity: Int) {
         foodDao.updateQuantityByName(name, quantity)
+        Log.e("FoodRepository", "Update given information: ${userId} ${name} ${quantity} ")
+
+        try {
+            val response = MyRetrofitBuilder.getApiService().updateFridgeItemForUser(
+                FridgeItemUpdateForUserRequest(userId, name, quantity)
+            )
+            if (response.isSuccessful) {
+                Log.d("FoodRepository", "Fridge Updated: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Update Failed: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}\"")
+        }
     }
 
 }

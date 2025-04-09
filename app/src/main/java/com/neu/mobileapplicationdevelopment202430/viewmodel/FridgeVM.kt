@@ -53,7 +53,7 @@ class FridgeVM(private val repository: FoodRepository, private val userId : Int)
         }
     }
 
-    fun updateItemQuantity(name: String, newQuantity: Int) {
+    fun updateItemQuantity(userId: Int, name: String, newQuantity: Int) {
         val updatedList = _fridgeItems.value?.map {
             if (it.name == name) it.copy(quantity = newQuantity) else it
         } ?: return
@@ -61,7 +61,7 @@ class FridgeVM(private val repository: FoodRepository, private val userId : Int)
         _fridgeItems.value = updatedList
 
         viewModelScope.launch {
-            repository.updateFridgeItemQuantity(name, newQuantity)
+            repository.updateFridgeItemQuantity(userId, name, newQuantity)
         }
     }
 }

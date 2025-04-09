@@ -21,4 +21,7 @@ interface FoodApiService {
 
     @POST("signup")
     suspend fun signup(@Body user: UserEntity): Response<SignupResponse>
+
+    @POST("updateFridgeItemForUser")
+    suspend fun updateFridgeItemForUser(@Body updateRequest: FridgeItemUpdateForUserRequest): Response<ApiResponse>
 }
