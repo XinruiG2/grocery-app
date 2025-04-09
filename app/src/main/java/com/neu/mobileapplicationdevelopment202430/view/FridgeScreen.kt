@@ -13,27 +13,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.util.Log
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
+import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 import com.neu.mobileapplicationdevelopment202430.model.FridgeItem
+import com.neu.mobileapplicationdevelopment202430.model.FridgeVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.RecipesVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.UserInformation
+import com.neu.mobileapplicationdevelopment202430.viewmodel.FridgeVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.RecipeVM
 
 @Composable
 fun FridgeScreen(navController: NavHostController) {
-    var items by remember {
-        mutableStateOf(
-            listOf(
-                FridgeItem("Apple", "2025-04-01", 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                FridgeItem("Milk", "2025-03-25", 1, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                FridgeItem("Carrot", "2025-03-30", 5, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                FridgeItem("Strawberries", "2025-03-30", 5, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                FridgeItem("Chocolate", "2026-05-30", 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg")
-            )
-        )
-    }
+//    var items by remember {
+//        mutableStateOf(
+//            listOf(
+//                FridgeItem("Apple", "2025-04-01", 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//                FridgeItem("Milk", "2025-03-25", 1, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//                FridgeItem("Carrot", "2025-03-30", 5, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//                FridgeItem("Strawberries", "2025-03-30", 5, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//                FridgeItem("Chocolate", "2026-05-30", 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg")
+//            )
+//        )
+//    }
+
     val context = LocalContext.current
     val userPreferences = UserInformation(context)
     val userId = userPreferences.getUserId()
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
+    val fridgeVM: FridgeVM = viewModel(factory = FridgeVMCreator(foodRepository, userId))
+    val fridgeItems by fridgeVM.fridgeItems.observeAsState(emptyList())
+    val isLoading by fridgeVM.isLoading.observeAsState()
+    val errorMessage by fridgeVM.errorMessage.observeAsState()
+
+    LaunchedEffect(Unit) {
+        fridgeVM.loadFridgeItems()
+    }
+
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -70,25 +89,14 @@ fun FridgeScreen(navController: NavHostController) {
 //            )
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(items) { item ->
+                items(fridgeItems ?: emptyList()) { item ->
                     FridgeItemCard(
                         item = item,
                         updateQuantity = { newQuantity ->
-                            items = items.map {
-                                if (it.name == item.name) {
-                                    it.copy(quantity = newQuantity)
-                                } else {
-                                    it
-                                }
-                            }
-
-                            Log.d("Fridge Mapping", items.joinToString { it.name + ": " + it.quantity })
-
+                            fridgeVM.updateItemQuantity(item.name, newQuantity)
 //                            if (newQuantity == 0) {
 //                                items = items.filterNot { it.name == item.name }
 //                            }
-
-                            Log.d("Fridge Removed", items.joinToString { it.name + ": " + it.quantity })
                         }
                     )
                 }

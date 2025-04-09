@@ -24,4 +24,20 @@ interface FoodDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipes(recipes: List<RecipeEntity>)
+
+    @Query("SELECT * FROM groceryItems")
+    fun getAllGroceryItems(): Flow<List<GroceryListEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGroceryItems(groceryItems: List<GroceryListEntity>)
+
+    @Query("SELECT * FROM fridgeItems")
+    fun getAllFridgeItems(): Flow<List<FridgeEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFridgeItems(fridgeItems: List<FridgeEntity>)
+
+    @Query("UPDATE fridgeItems SET quantity = :quantity WHERE name = :name")
+    suspend fun updateQuantityByName(name: String, quantity: Int)
+
 }

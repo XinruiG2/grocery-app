@@ -25,3 +25,16 @@ fun RecipeItem.toEntity(): RecipeEntity {
         imageUrl = this.imageUrl
     )
 }
+
+fun FridgeEntity.toFridgeItem(): FridgeItem {
+    return FridgeItem(this.name, this.dateBought, this.quantity, this.imageUrl)
+}
+
+fun FridgeItem.toEntity(): FridgeEntity {
+    return FridgeEntity(
+        name = this.name,
+        dateBought = this.dateBought,
+        quantity = this.quantity,
+        imageUrl = this.imageUrl
+    )
+}

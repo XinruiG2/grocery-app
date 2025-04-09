@@ -108,4 +108,42 @@ class FoodRepository(private val foodDao: FoodDao, private val context: Context)
         }
     }
 
+    suspend fun getUserInformationFromApi(userId: Int): FullUserEntity {
+        val response = MyRetrofitBuilder.getApiService().getStoredUserData(userId)
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("User not found")
+        } else {
+            response.errorBody()?.let {
+                Log.e("FoodRepository", "Error Body: ${it.string()}")
+            }
+            Log.e("FoodRepository", "Error: ${response.message()}")
+            throw Exception("Error: ${response.message()}")
+        }
+    }
+
+    suspend fun getFridgeItemsFromDatabase(): List<FridgeItem>? {
+        try {
+            val fridgeEntities = foodDao.getAllFridgeItems().firstOrNull()
+            Log.d("Food Repository", "Fetched: $fridgeEntities")
+
+            if (fridgeEntities.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return fridgeEntities.map { it.toFridgeItem() }
+        } catch (e: Exception) {
+            Log.e("Food Repository", "Error: ${e.message}")
+            return emptyList()
+        }
+    }
+
+    suspend fun saveFridgeItemsToDatabase(fridgeItems: List<FridgeItem>) {
+        val entities = fridgeItems.map { it.toEntity() }
+        foodDao.insertFridgeItems(entities)
+    }
+
+    suspend fun updateFridgeItemQuantity(name: String, quantity: Int) {
+        foodDao.updateQuantityByName(name, quantity)
+    }
+
 }

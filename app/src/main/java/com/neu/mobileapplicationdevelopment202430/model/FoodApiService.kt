@@ -13,6 +13,9 @@ interface FoodApiService {
     @GET("getRecipes")
     suspend fun getRecipes(): Response<List<RecipeEntity>>
 
+    @GET("getStoredUserData/{user_id}")
+    suspend fun getStoredUserData(@retrofit2.http.Path("user_id") userId: Int): Response<FullUserEntity>
+
     @POST("login")
     suspend fun login(@Body user: UserEntity): Response<LoginResponse>
 
