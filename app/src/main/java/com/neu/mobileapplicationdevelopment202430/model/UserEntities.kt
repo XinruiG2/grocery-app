@@ -29,6 +29,12 @@ data class FridgeItemUpdateForUserRequest(
     val quantity: Int
 )
 
+data class GroceryItemUpdateForUserRequest(
+    val user_id: Int,
+    val name: String,
+    val quantity: Int
+)
+
 data class ApiResponse(
     val message: String
 )

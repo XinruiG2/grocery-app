@@ -2,6 +2,10 @@ package com.neu.mobileapplicationdevelopment202430.view
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -53,7 +57,7 @@ fun GroceryListScreen(navController: NavHostController) {
     val errorMessage by groceryVM.errorMessage.observeAsState()
 
     val ingredientsVM: IngredientsVM = viewModel(factory = IngredientsVMCreator(foodRepository))
-    val fridgeVM: FridgeVM = viewModel(factory = FridgeVMCreator(foodRepository, userId))
+    val fridgeVM: FridgeVM = viewModel(factory = FridgeVMCreator(foodRepository, userId, groceryVM))
 
     var checkedItems by remember { mutableStateOf(setOf<GroceryListItem>()) }
     var showAddItemPopup by remember { mutableStateOf(false) }
@@ -74,7 +78,9 @@ fun GroceryListScreen(navController: NavHostController) {
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
@@ -99,36 +105,38 @@ fun GroceryListScreen(navController: NavHostController) {
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
 
-                    groceryItems?.forEach { item ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = checkedItems.contains(item),
-                                onCheckedChange = { isChecked ->
-                                    checkedItems = if (isChecked) {
-                                        checkedItems + item
-                                    } else {
-                                        checkedItems - item
-                                    }
-                                }
-                            )
-                            Text(
-                                text = "${item.name}, ${item.quantity}",
-                                fontSize = 18.sp,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(
-                                onClick = { groceryVM.deleteGroceryItem(userId, item)}
+                    LazyColumn() {
+                        items(groceryItems ?: emptyList()) { item ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "remove item from list",
-                                    tint = Color.Black
+                                Checkbox(
+                                    checked = checkedItems.contains(item),
+                                    onCheckedChange = { isChecked ->
+                                        checkedItems = if (isChecked) {
+                                            checkedItems + item
+                                        } else {
+                                            checkedItems - item
+                                        }
+                                    }
                                 )
+                                Text(
+                                    text = "${item.name}, ${item.quantity}",
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(
+                                    onClick = { groceryVM.deleteGroceryItem(userId, item) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "remove item from list",
+                                        tint = Color.Black
+                                    )
+                                }
                             }
                         }
                     }
@@ -150,7 +158,10 @@ fun GroceryListScreen(navController: NavHostController) {
                     Button(
                         onClick = {
                             coroutineScope.launch {
-                                fridgeVM.addToOrUpdateGroceryList(checkedItems.toList(), availableIngredients ?: listOf())
+                                fridgeVM.addToOrUpdateGroceryList(
+                                    checkedItems.toList(),
+                                    availableIngredients ?: listOf()
+                                )
                             }
                         }
                     ) {
@@ -180,10 +191,12 @@ fun GroceryListScreen(navController: NavHostController) {
             text = {
                 Column {
                     Spacer(modifier = Modifier.height(16.dp))
-                    Row (modifier = Modifier
+                    Row(
+                        modifier = Modifier
                             .fillMaxWidth()
                             .padding(0.dp),
-                        verticalAlignment = Alignment.CenterVertically) {
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(text = "Select an item:")
                         Spacer(modifier = Modifier.width(3.dp))
                         DropDown(
@@ -195,10 +208,12 @@ fun GroceryListScreen(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Row (modifier = Modifier
+                    Row(
+                        modifier = Modifier
                             .fillMaxWidth()
                             .padding(0.dp),
-                        verticalAlignment = Alignment.CenterVertically) {
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(text = "Select quantity:")
                         Spacer(modifier = Modifier.width(3.dp))
                         DropDown(
@@ -221,7 +236,9 @@ fun GroceryListScreen(navController: NavHostController) {
                 }
             },
             dismissButton = {
-                Button(modifier = Modifier.padding(bottom = 9.dp), onClick = { showAddItemPopup = false }) {
+                Button(
+                    modifier = Modifier.padding(bottom = 9.dp),
+                    onClick = { showAddItemPopup = false }) {
                     Text("Cancel")
                 }
             }

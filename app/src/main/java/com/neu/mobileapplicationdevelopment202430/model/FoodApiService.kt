@@ -27,6 +27,9 @@ interface FoodApiService {
     @POST("updateFridgeItemForUser")
     suspend fun updateFridgeItemForUser(@Body updateRequest: FridgeItemUpdateForUserRequest): Response<ApiResponse>
 
+    @POST("updateGroceryItemForUser")
+    suspend fun updateGroceryItemForUser(@Body updateRequest: GroceryItemUpdateForUserRequest): Response<ApiResponse>
+
     @POST("addToFridgeItems/{user_id}")
     suspend fun addToFridgeItems(@Path("user_id") userId: Int, @Body fridgeItem: FridgeItem): Response<ApiResponse>
 

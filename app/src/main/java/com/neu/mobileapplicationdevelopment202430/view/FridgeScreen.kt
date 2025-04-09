@@ -21,9 +21,11 @@ import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 import com.neu.mobileapplicationdevelopment202430.model.FridgeItem
 import com.neu.mobileapplicationdevelopment202430.model.FridgeVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.GroceryVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.RecipesVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.UserInformation
 import com.neu.mobileapplicationdevelopment202430.viewmodel.FridgeVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.GroceryVM
 import com.neu.mobileapplicationdevelopment202430.viewmodel.RecipeVM
 
 @Composable
@@ -44,7 +46,8 @@ fun FridgeScreen(navController: NavHostController) {
     val userPreferences = UserInformation(context)
     val userId = userPreferences.getUserId()
     val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
-    val fridgeVM: FridgeVM = viewModel(factory = FridgeVMCreator(foodRepository, userId))
+    val groceryVM: GroceryVM = viewModel(factory = GroceryVMCreator(foodRepository, userId))
+    val fridgeVM: FridgeVM = viewModel(factory = FridgeVMCreator(foodRepository, userId, groceryVM))
     val fridgeItems by fridgeVM.fridgeItems.observeAsState(emptyList())
     val isLoading by fridgeVM.isLoading.observeAsState()
     val errorMessage by fridgeVM.errorMessage.observeAsState()

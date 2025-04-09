@@ -49,11 +49,11 @@ class RegisterVMCreator(private val repository: FoodRepository) : ViewModelProvi
     }
 }
 
-class FridgeVMCreator(private val repository: FoodRepository, private val userId: Int) : ViewModelProvider.Factory {
+class FridgeVMCreator(private val repository: FoodRepository, private val userId: Int, private val groceryVM: GroceryVM) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FridgeVM::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return FridgeVM(repository, userId) as T
+            return FridgeVM(repository, userId, groceryVM) as T
         }
         throw IllegalArgumentException("Unknown VM")
     }

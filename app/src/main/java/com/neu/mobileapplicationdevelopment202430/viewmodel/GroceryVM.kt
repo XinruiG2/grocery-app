@@ -60,13 +60,47 @@ class GroceryVM(private val repository: FoodRepository, private val userId : Int
         val groceryItemToAdd = GroceryListItem(name, quantity)
 
         viewModelScope.launch {
-            repository.addGroceryItem(userId, groceryItemToAdd)
+            val existingItems = repository.getGroceryItemsFromDatabase()
+//            repository.addGroceryItem(userId, groceryItemToAdd)
+//
+//            val updatedGroceryItems = repository.getGroceryItemsFromDatabase()
+//            Log.d("Grocery VM", updatedGroceryItems.toString())
+//            withContext(Dispatchers.Main) {
+//                _groceryItems.value = updatedGroceryItems
+//            }
+            if (existingItems != null) {
+                val existingItem = existingItems.find { it.name == name }
+                if (existingItem == null) {
+                    repository.addGroceryItem(userId, groceryItemToAdd)
+
+                    val updatedGroceryItems = repository.getGroceryItemsFromDatabase()?.distinctBy { it.name }
+                    Log.d("Grocery VM", updatedGroceryItems.toString())
+                    withContext(Dispatchers.Main) {
+                        _groceryItems.value = updatedGroceryItems
+                    }
+                } else {
+                    val newQuantity = existingItem.quantity + quantity
+                    repository.updateGroceryItemQuantity(userId, name, newQuantity)
+                    val updatedGroceryItems = repository.getGroceryItemsFromDatabase()?.distinctBy { it.name }
+                    withContext(Dispatchers.Main) {
+                        _groceryItems.value = updatedGroceryItems
+                    }
+                }
+            } else {
+                Log.d("Grocery VM", "Item not found")
+            }
         }
     }
 
     fun deleteGroceryItem(userId: Int, item: GroceryListItem) {
         viewModelScope.launch {
             repository.deleteGroceryItem(userId, item)
+
+            val updatedGroceryItems = repository.getGroceryItemsFromDatabase()?.distinctBy { it.name }
+            Log.d("Grocery VM", updatedGroceryItems.toString())
+            withContext(Dispatchers.Main) {
+                _groceryItems.value = updatedGroceryItems
+            }
         }
     }
 }

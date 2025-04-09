@@ -163,6 +163,22 @@ class FoodRepository(private val foodDao: FoodDao, private val context: Context)
         }
     }
 
+    suspend fun updateGroceryItemQuantity(userId: Int, name: String, quantity: Int) {
+        try {
+            val response = MyRetrofitBuilder.getApiService().updateGroceryItemForUser(
+                GroceryItemUpdateForUserRequest(userId, name, quantity)
+            )
+            if (response.isSuccessful) {
+                foodDao.updateQuantityByNameGroceries(name, quantity)
+                Log.d("FoodRepository", "Grocery Updated: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Update Failed: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}\"")
+        }
+    }
+
     suspend fun addGroceryItem(userId: Int, groceryItem: GroceryListItem) {
         try {
             val response = MyRetrofitBuilder.getApiService().addToGroceryList(userId, groceryItem)

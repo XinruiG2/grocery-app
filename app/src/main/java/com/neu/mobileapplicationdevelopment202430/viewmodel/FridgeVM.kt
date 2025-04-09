@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class FridgeVM(private val repository: FoodRepository, private val userId : Int) : ViewModel() {
+class FridgeVM(private val repository: FoodRepository, private val userId : Int, private val groceryVM: GroceryVM) : ViewModel() {
     private val _fridgeItems = MutableLiveData<List<FridgeItem>?>(emptyList())
     val fridgeItems: LiveData<List<FridgeItem>?> get() = _fridgeItems
     private val _isLoading = MutableLiveData<Boolean>()
@@ -102,7 +102,7 @@ class FridgeVM(private val repository: FoodRepository, private val userId : Int)
                 repository.addFridgeItem(userId, newFridgeItem)
             }
 
-            repository.deleteGroceryItem(userId, groceryItem)
+            groceryVM.deleteGroceryItem(userId, groceryItem)
         }
 
         _fridgeItems.value = repository.getFridgeItemsFromDatabase()

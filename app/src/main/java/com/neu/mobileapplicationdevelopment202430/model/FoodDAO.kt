@@ -43,6 +43,9 @@ interface FoodDao {
     @Query("UPDATE fridgeItems SET quantity = :quantity WHERE name = :name")
     suspend fun updateQuantityByName(name: String, quantity: Int)
 
+    @Query("UPDATE groceryItems SET quantity = :quantity WHERE name = :name")
+    suspend fun updateQuantityByNameGroceries(name: String, quantity: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGroceryItem(groceryItem: GroceryListEntity)
 
