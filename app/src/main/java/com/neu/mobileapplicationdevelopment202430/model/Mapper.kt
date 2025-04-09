@@ -38,3 +38,14 @@ fun FridgeItem.toEntity(): FridgeEntity {
         imageUrl = this.imageUrl
     )
 }
+
+fun GroceryListEntity.toGroceryItem(): GroceryListItem {
+    return GroceryListItem(this.name, this.quantity)
+}
+
+fun GroceryListItem.toEntity(): GroceryListEntity {
+    return GroceryListEntity(
+        name = this.name,
+        quantity = this.quantity
+    )
+}

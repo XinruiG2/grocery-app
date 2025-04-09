@@ -4,7 +4,9 @@ import retrofit2.http.Query
 import retrofit2.http.GET
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface FoodApiService {
     @GET("getIngredients")
@@ -24,4 +26,13 @@ interface FoodApiService {
 
     @POST("updateFridgeItemForUser")
     suspend fun updateFridgeItemForUser(@Body updateRequest: FridgeItemUpdateForUserRequest): Response<ApiResponse>
+
+    @POST("addToFridgeItems/{user_id}")
+    suspend fun addToFridgeItems(@Path("user_id") userId: Int, @Body fridgeItem: FridgeItem): Response<ApiResponse>
+
+    @POST("addToGroceryList/{user_id}")
+    suspend fun addToGroceryList(@Path("user_id") userId: Int, @Body groceryItem: GroceryListItem): Response<ApiResponse>
+
+    @DELETE("deleteFromGroceryList/{user_id}")
+    suspend fun deleteFromGroceryList(@Path("user_id") userId: Int, @Body groceryItem: GroceryListItem): Response<ApiResponse>
 }

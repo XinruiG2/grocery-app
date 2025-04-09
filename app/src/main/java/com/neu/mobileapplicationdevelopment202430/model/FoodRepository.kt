@@ -160,4 +160,71 @@ class FoodRepository(private val foodDao: FoodDao, private val context: Context)
         }
     }
 
+    suspend fun addGroceryItem(userId: Int, groceryItem: GroceryListItem) {
+        foodDao.insertGroceryItem(groceryItem.toEntity())
+
+        try {
+            val response = MyRetrofitBuilder.getApiService().addToGroceryList(userId, groceryItem)
+            if (response.isSuccessful) {
+                Log.d("FoodRepository", "GI added successfully: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Failed to add GI: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}")
+        }
+    }
+
+    suspend fun deleteGroceryItem(userId: Int, groceryItem: GroceryListItem) {
+        foodDao.deleteGroceryItem(groceryItem.name)
+
+        try {
+            val response = MyRetrofitBuilder.getApiService().deleteFromGroceryList(userId, groceryItem)
+            if (response.isSuccessful) {
+                Log.d("FoodRepository", "GI deleted successfully: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Failed to delete GI: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}")
+        }
+    }
+
+    suspend fun saveGroceryItemsToDatabase(groceryItems: List<GroceryListItem>) {
+        val entities = groceryItems.map { it.toEntity() }
+        foodDao.insertGroceryItems(entities)
+    }
+
+    suspend fun getGroceryItemsFromDatabase(): List<GroceryListItem>? {
+        try {
+            val groceryEntities = foodDao.getAllGroceryItems().firstOrNull()
+
+            if (groceryEntities.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return groceryEntities.map { it.toGroceryItem() }
+        } catch (e: Exception) {
+            Log.e("Food Repository", "Error: ${e.message}")
+            return emptyList()
+        }
+    }
+
+    suspend fun getByName(name: String) = foodDao.getByName(name)
+
+    suspend fun addFridgeItem(userId: Int, fridgeItem: FridgeItem) {
+        foodDao.insertFridgeItem(fridgeItem.toEntity())
+
+        try {
+            val response = MyRetrofitBuilder.getApiService().addToFridgeItems(userId, fridgeItem)
+            if (response.isSuccessful) {
+                Log.d("FoodRepository", "FI added successfully: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Failed to add FI: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}")
+        }
+    }
+
 }

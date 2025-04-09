@@ -6,12 +6,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
+import com.neu.mobileapplicationdevelopment202430.model.FridgeEntity
 import com.neu.mobileapplicationdevelopment202430.model.FridgeItem
+import com.neu.mobileapplicationdevelopment202430.model.GroceryListItem
+import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
 import com.neu.mobileapplicationdevelopment202430.model.RecipeItem
 import com.neu.mobileapplicationdevelopment202430.model.toFridgeItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class FridgeVM(private val repository: FoodRepository, private val userId : Int) : ViewModel() {
     private val _fridgeItems = MutableLiveData<List<FridgeItem>?>(emptyList())
@@ -30,6 +36,7 @@ class FridgeVM(private val repository: FoodRepository, private val userId : Int)
                 val apiUserInformation = repository.getUserInformationFromApi(userId)
                 if (apiUserInformation != null) {
                     val fridgeItems = apiUserInformation.fridge_items.map { it.toFridgeItem() }
+                    repository.saveFridgeItemsToDatabase(fridgeItems)
                     withContext(Dispatchers.Main) {
                         _fridgeItems.value = fridgeItems
                     }
@@ -63,5 +70,34 @@ class FridgeVM(private val repository: FoodRepository, private val userId : Int)
         viewModelScope.launch {
             repository.updateFridgeItemQuantity(userId, name, newQuantity)
         }
+    }
+
+    suspend fun addToOrUpdateGroceryList(
+        groceryItems: List<GroceryListItem>,
+        ingredients: List<IngredientItem>) {
+        val ingredientsMap = ingredients.associateBy { it.name }
+        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+        for (groceryItem in groceryItems) {
+            val ingredient = ingredientsMap[groceryItem.name]
+            val imageUrl = ingredient?.imageUrl ?: ""
+
+            val existing = repository.getByName(groceryItem.name)
+
+            if (existing != null) {
+                val newQuantity = existing.quantity + groceryItem.quantity
+                repository.updateFridgeItemQuantity(userId, groceryItem.name, newQuantity)
+            } else {
+                val newFridgeItem = FridgeItem(
+                    name = groceryItem.name,
+                    dateBought = currentDate,
+                    quantity = groceryItem.quantity,
+                    imageUrl = imageUrl
+                )
+                repository.addFridgeItem(userId, newFridgeItem)
+            }
+        }
+
+        _fridgeItems.value = repository.getFridgeItemsFromDatabase()
     }
 }

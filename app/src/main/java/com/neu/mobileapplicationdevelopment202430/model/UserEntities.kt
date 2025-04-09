@@ -20,7 +20,7 @@ data class FullUserEntity(
     val username: String,
     val password: String,
     val fridge_items: List<FridgeEntity>,
-    val grocery_list: List<FridgeEntity>
+    val grocery_list: List<GroceryListEntity>
 )
 
 data class FridgeItemUpdateForUserRequest(

@@ -3,6 +3,7 @@ package com.neu.mobileapplicationdevelopment202430.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.neu.mobileapplicationdevelopment202430.viewmodel.FridgeVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.GroceryVM
 import com.neu.mobileapplicationdevelopment202430.viewmodel.IngredientsVM
 import com.neu.mobileapplicationdevelopment202430.viewmodel.LoginVM
 import com.neu.mobileapplicationdevelopment202430.viewmodel.RecipeVM
@@ -53,6 +54,17 @@ class FridgeVMCreator(private val repository: FoodRepository, private val userId
         if (modelClass.isAssignableFrom(FridgeVM::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return FridgeVM(repository, userId) as T
+        }
+        throw IllegalArgumentException("Unknown VM")
+    }
+}
+
+
+class GroceryVMCreator(private val repository: FoodRepository, private val userId: Int) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(GroceryVM::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return GroceryVM(repository, userId) as T
         }
         throw IllegalArgumentException("Unknown VM")
     }

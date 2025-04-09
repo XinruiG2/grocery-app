@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -15,27 +16,59 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
+import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
+import com.neu.mobileapplicationdevelopment202430.model.FridgeVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.GroceryListItem
+import com.neu.mobileapplicationdevelopment202430.model.GroceryVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.IngredientsVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.UserInformation
+import com.neu.mobileapplicationdevelopment202430.viewmodel.FridgeVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.GroceryVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.IngredientsVM
+import kotlinx.coroutines.launch
 
 @Composable
 fun GroceryListScreen(navController: NavHostController) {
-    var groceryItems by remember {
-        mutableStateOf(
-            listOf(
-                GroceryListItem("Carrots", 4),
-                GroceryListItem("Eggs", 12)
-            )
-        )
-    }
+//    var groceryItems by remember {
+//        mutableStateOf(
+//            listOf(
+//                GroceryListItem("Carrots", 4),
+//                GroceryListItem("Eggs", 12)
+//            )
+//        )
+//    }
+
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val userPreferences = UserInformation(context)
+    val userId = userPreferences.getUserId()
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
+    val groceryVM: GroceryVM = viewModel(factory = GroceryVMCreator(foodRepository, userId))
+    val groceryItems by groceryVM.groceryItems.observeAsState(emptyList())
+    val isLoading by groceryVM.isLoading.observeAsState()
+    val errorMessage by groceryVM.errorMessage.observeAsState()
+
+    val ingredientsVM: IngredientsVM = viewModel(factory = IngredientsVMCreator(foodRepository))
+    val fridgeVM: FridgeVM = viewModel(factory = FridgeVMCreator(foodRepository, userId))
+
     var checkedItems by remember { mutableStateOf(setOf<GroceryListItem>()) }
     var showAddItemPopup by remember { mutableStateOf(false) }
     var selectedItemName by remember { mutableStateOf("Carrots") }
     var selectedItemQuantity by remember { mutableStateOf(1) }
 
     // maybe replace later, get db's ingredients
-    val itemOptions = listOf("Carrots", "Eggs", "Tomatoes", "Strawberries", "Milk")
+    val availableIngredients by ingredientsVM.ingredients.observeAsState()
+    val itemOptions = availableIngredients?.map { it.name } ?: emptyList()
     val quantityOptions = (1..50).toList() //m should this be constant or an api call??
+
+    LaunchedEffect(Unit) {
+        groceryVM.loadGroceryItems()
+        ingredientsVM.loadIngredients()
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -66,7 +99,7 @@ fun GroceryListScreen(navController: NavHostController) {
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
 
-                    groceryItems.forEach { item ->
+                    groceryItems?.forEach { item ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -89,7 +122,7 @@ fun GroceryListScreen(navController: NavHostController) {
                                 modifier = Modifier.weight(1f)
                             )
                             IconButton(
-                                onClick = { groceryItems = groceryItems - item }
+                                onClick = { groceryVM.deleteGroceryItem(userId, item)}
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
@@ -115,7 +148,11 @@ fun GroceryListScreen(navController: NavHostController) {
                         Text(text = "add item to list")
                     }
                     Button(
-                        onClick = {}
+                        onClick = {
+                            coroutineScope.launch {
+                                fridgeVM.addToOrUpdateGroceryList(checkedItems.toList(), availableIngredients ?: listOf())
+                            }
+                        }
                     ) {
                         Text(text = "add items to fridge")
                     }
@@ -176,7 +213,7 @@ fun GroceryListScreen(navController: NavHostController) {
                 Button(
                     modifier = Modifier.padding(end = 15.dp, bottom = 9.dp),
                     onClick = {
-                        groceryItems = groceryItems + GroceryListItem(selectedItemName, selectedItemQuantity)
+                        groceryVM.addGroceryItem(userId, selectedItemName, selectedItemQuantity)
                         showAddItemPopup = false
                     }
                 ) {
