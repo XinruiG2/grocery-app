@@ -244,4 +244,25 @@ class FoodRepository(private val foodDao: FoodDao, private val context: Context)
         }
     }
 
+    suspend fun saveRemindersToDatabase(reminders: List<ReminderItem>) {
+        val entities = reminders.map { it.toEntity() }
+        foodDao.insertReminders(entities)
+    }
+
+    suspend fun getRemindersFromDatabase(): List<ReminderItem>? {
+        try {
+            val reminderEntities = foodDao.getAllReminders().firstOrNull()
+            Log.d("Food Repository", "Fetched: $reminderEntities")
+
+            if (reminderEntities.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return reminderEntities.map { it.toReminderItem() }
+        } catch (e: Exception) {
+            Log.e("Food Repository", "Error: ${e.message}")
+            return emptyList()
+        }
+    }
+
 }

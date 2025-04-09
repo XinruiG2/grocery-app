@@ -105,37 +105,56 @@ fun GroceryListScreen(navController: NavHostController) {
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
 
-                    LazyColumn() {
-                        items(groceryItems ?: emptyList()) { item ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Checkbox(
-                                    checked = checkedItems.contains(item),
-                                    onCheckedChange = { isChecked ->
-                                        checkedItems = if (isChecked) {
-                                            checkedItems + item
-                                        } else {
-                                            checkedItems - item
-                                        }
-                                    }
-                                )
-                                Text(
-                                    text = "${item.name}, ${item.quantity}",
-                                    fontSize = 18.sp,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                IconButton(
-                                    onClick = { groceryVM.deleteGroceryItem(userId, item) }
+                    if (isLoading == true) {
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+                    } else if (errorMessage != null) {
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Text(
+                                text = errorMessage!!,
+                                color = Color.Black,
+                                fontSize = 22.sp,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                    } else {
+                        LazyColumn() {
+                            items(groceryItems ?: emptyList()) { item ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = "remove item from list",
-                                        tint = Color.Black
+                                    Checkbox(
+                                        checked = checkedItems.contains(item),
+                                        onCheckedChange = { isChecked ->
+                                            checkedItems = if (isChecked) {
+                                                checkedItems + item
+                                            } else {
+                                                checkedItems - item
+                                            }
+                                        }
                                     )
+                                    Text(
+                                        text = "${item.name}, ${item.quantity}",
+                                        fontSize = 18.sp,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    IconButton(
+                                        onClick = { groceryVM.deleteGroceryItem(userId, item) }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "remove item from list",
+                                            tint = Color.Black
+                                        )
+                                    }
                                 }
                             }
                         }

@@ -8,6 +8,7 @@ import com.neu.mobileapplicationdevelopment202430.viewmodel.IngredientsVM
 import com.neu.mobileapplicationdevelopment202430.viewmodel.LoginVM
 import com.neu.mobileapplicationdevelopment202430.viewmodel.RecipeVM
 import com.neu.mobileapplicationdevelopment202430.viewmodel.RegisterVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.RemindersVM
 
 class IngredientsVMCreator(private val repository: FoodRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -65,6 +66,18 @@ class GroceryVMCreator(private val repository: FoodRepository, private val userI
         if (modelClass.isAssignableFrom(GroceryVM::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return GroceryVM(repository, userId) as T
+        }
+        throw IllegalArgumentException("Unknown VM")
+    }
+}
+
+
+
+class ReminderVMCreator(private val repository: FoodRepository, private val userId: Int) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(RemindersVM::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return RemindersVM(repository, userId) as T
         }
         throw IllegalArgumentException("Unknown VM")
     }

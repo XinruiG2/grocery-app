@@ -9,10 +9,6 @@ import com.neu.mobileapplicationdevelopment202430.model.IngredientEntity
 
 @Dao
 interface FoodDao {
-    // smth for inserting grocery items --> after we figure out user thing?
-
-    // also smth for what's in my fridge maybe
-
     @Query("SELECT * FROM ingredients")
     fun getAllIngredients(): Flow<List<IngredientEntity>>
 
@@ -54,4 +50,10 @@ interface FoodDao {
 
     @Query("SELECT * FROM fridgeItems WHERE name = :name LIMIT 1")
     suspend fun getByName(name: String): FridgeEntity?
+
+    @Query("SELECT * FROM reminders")
+    fun getAllReminders(): Flow<List<ReminderEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReminders(reminders: List<ReminderEntity>)
 }

@@ -91,17 +91,36 @@ fun FridgeScreen(navController: NavHostController) {
 //                fontWeight = FontWeight.Bold
 //            )
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(fridgeItems ?: emptyList()) { item ->
-                    FridgeItemCard(
-                        item = item,
-                        updateQuantity = { newQuantity ->
-                            fridgeVM.updateItemQuantity(userId, item.name, newQuantity)
+            if (isLoading == true) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            } else if (errorMessage != null) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = errorMessage!!,
+                        color = Color.Black,
+                        fontSize = 22.sp,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(fridgeItems ?: emptyList()) { item ->
+                        FridgeItemCard(
+                            item = item,
+                            updateQuantity = { newQuantity ->
+                                fridgeVM.updateItemQuantity(userId, item.name, newQuantity)
 //                            if (newQuantity == 0) {
 //                                items = items.filterNot { it.name == item.name }
 //                            }
-                        }
-                    )
+                            }
+                        )
+                    }
                 }
             }
 
