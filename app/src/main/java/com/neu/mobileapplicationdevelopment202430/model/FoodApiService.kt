@@ -33,6 +33,10 @@ interface FoodApiService {
     @POST("addToGroceryList/{user_id}")
     suspend fun addToGroceryList(@Path("user_id") userId: Int, @Body groceryItem: GroceryListItem): Response<ApiResponse>
 
-    @DELETE("deleteFromGroceryList/{user_id}")
-    suspend fun deleteFromGroceryList(@Path("user_id") userId: Int, @Body groceryItem: GroceryListItem): Response<ApiResponse>
+    @DELETE("deleteFromGroceryList/{user_id}/{item_name}/{item_quantity}")
+    suspend fun deleteFromGroceryList(
+        @Path("user_id") userId: Int,
+        @Path("item_name") itemName: String,
+        @Path("item_quantity") itemQuantity: Int
+    ): Response<ApiResponse>
 }
