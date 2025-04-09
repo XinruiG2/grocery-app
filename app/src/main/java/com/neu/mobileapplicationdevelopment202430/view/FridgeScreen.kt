@@ -14,24 +14,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.util.Log
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
 import com.neu.mobileapplicationdevelopment202430.model.FridgeItem
+import com.neu.mobileapplicationdevelopment202430.model.FridgeRepository
+import com.neu.mobileapplicationdevelopment202430.model.FridgeVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.UserInformation
+import com.neu.mobileapplicationdevelopment202430.viewmodel.FridgeVM
 
 @Composable
 fun FridgeScreen(navController: NavHostController) {
-    var items by remember {
-        mutableStateOf(
-            listOf(
-                FridgeItem("Apple", "2025-04-01", 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                FridgeItem("Milk", "2025-03-25", 1, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                FridgeItem("Carrot", "2025-03-30", 5, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                FridgeItem("Strawberries", "2025-03-30", 5, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-                FridgeItem("Chocolate", "2026-05-30", 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg")
-            )
-        )
-    }
+
+//    var items by remember {
+//        mutableStateOf(
+//            listOf(
+//                FridgeItem("Apple", "2025-04-01", 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//                FridgeItem("Milk", "2025-03-25", 1, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//                FridgeItem("Carrot", "2025-03-30", 5, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//                FridgeItem("Strawberries", "2025-03-30", 5, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
+//                FridgeItem("Chocolate", "2026-05-30", 3, "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg")
+//            )
+//        )
+//    }
     val context = LocalContext.current
+    val db = FoodDatabase.getDatabase(context)
+    val fridgeVM: FridgeVM = viewModel(
+        factory = FridgeVMCreator(FridgeRepository(db.fridgeDao()))
+    )
+    val items by fridgeVM.fridgeItems.collectAsState()
     val userPreferences = UserInformation(context)
     val userId = userPreferences.getUserId()
 
@@ -74,13 +85,7 @@ fun FridgeScreen(navController: NavHostController) {
                     FridgeItemCard(
                         item = item,
                         updateQuantity = { newQuantity ->
-                            items = items.map {
-                                if (it.name == item.name) {
-                                    it.copy(quantity = newQuantity)
-                                } else {
-                                    it
-                                }
-                            }
+                            fridgeVM.updateQuantity(item.name, newQuantity)
 
                             Log.d("Fridge Mapping", items.joinToString { it.name + ": " + it.quantity })
 
