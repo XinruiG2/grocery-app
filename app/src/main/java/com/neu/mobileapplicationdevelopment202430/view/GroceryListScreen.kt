@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -172,7 +173,7 @@ fun GroceryListScreen(navController: NavHostController) {
                     Button(
                         onClick = { showAddItemPopup = true }
                     ) {
-                        Text(text = "add item to list")
+                        Text(text = "Add to Grocery List")
                     }
                     Button(
                         onClick = {
@@ -184,7 +185,7 @@ fun GroceryListScreen(navController: NavHostController) {
                             }
                         }
                     ) {
-                        Text(text = "add items to fridge")
+                        Text(text = "Add to Fridge")
                     }
                 }
             }
@@ -213,10 +214,10 @@ fun GroceryListScreen(navController: NavHostController) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp),
+                            .padding(vertical = 8.dp, horizontal = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Select an item:")
+                        Text(text = "Item:", fontSize = 16.sp, modifier = Modifier.padding(end = 12.dp))
                         Spacer(modifier = Modifier.width(3.dp))
                         DropDown(
                             options = itemOptions,
@@ -230,16 +231,34 @@ fun GroceryListScreen(navController: NavHostController) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp),
+                            .padding(vertical = 8.dp, horizontal = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Select quantity:")
-                        Spacer(modifier = Modifier.width(3.dp))
-                        DropDown(
-                            options = quantityOptions.map { it.toString() },
-                            selectedOption = selectedItemQuantity.toString(),
-                            onOptionSelected = { selectedItemQuantity = it.toInt() }
+                        Text(
+                            text = "Quantity:",
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(end = 12.dp)
                         )
+
+                        IconButton(
+                            onClick = { if (selectedItemQuantity > 1) selectedItemQuantity-- },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = "Decrease")
+                        }
+
+                        Text(
+                            text = "$selectedItemQuantity",
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+
+                        IconButton(
+                            onClick = { selectedItemQuantity++ },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "Increase")
+                        }
                     }
                 }
             },
