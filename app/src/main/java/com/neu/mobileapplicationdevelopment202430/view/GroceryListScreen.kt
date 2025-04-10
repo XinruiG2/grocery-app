@@ -62,7 +62,7 @@ fun GroceryListScreen(navController: NavHostController) {
 
     var checkedItems by remember { mutableStateOf(setOf<GroceryListItem>()) }
     var showAddItemPopup by remember { mutableStateOf(false) }
-    var selectedItemName by remember { mutableStateOf("Carrots") }
+    var selectedItemName by remember { mutableStateOf("Apple") }
     var selectedItemQuantity by remember { mutableStateOf(1) }
 
     // maybe replace later, get db's ingredients
