@@ -48,6 +48,7 @@ fun RecipeItemCard(item: RecipeItem, onReadMore: (RecipeItem) -> Unit) {
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f)
+                        .testTag("image")
                         .padding(0.dp)
                 )
 
@@ -61,6 +62,7 @@ fun RecipeItemCard(item: RecipeItem, onReadMore: (RecipeItem) -> Unit) {
                     Text(
                         text = item.name,
                         fontSize = 16.sp,
+                        modifier = Modifier.testTag("name")
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
@@ -68,14 +70,15 @@ fun RecipeItemCard(item: RecipeItem, onReadMore: (RecipeItem) -> Unit) {
                     Text(
                         text = item.description,
                         fontSize = 16.sp,
-                        color = Color.Black
+                        color = Color.Black,
+                        modifier = Modifier.testTag("description")
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
 
                     TextButton(
                         onClick = { onReadMore(item) },
-                        modifier = Modifier.padding(0.dp)
+                        modifier = Modifier.padding(0.dp).testTag("readMoreButton")
                     ) {
                         Text("Read more...", color = Color.Gray)
                     }
