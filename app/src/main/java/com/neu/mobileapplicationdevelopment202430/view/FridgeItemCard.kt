@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ fun FridgeItemCard(item: FridgeItem, updateQuantity: (Int) -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = maxHeight)
+                .testTag("fridgeCard")
                 .padding(vertical = 8.dp, horizontal = 8.dp),
             elevation = 4.dp
         ) {
@@ -47,6 +49,7 @@ fun FridgeItemCard(item: FridgeItem, updateQuantity: (Int) -> Unit) {
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f)
+                        .testTag("image")
                         .padding(0.dp)
                 )
 
@@ -80,7 +83,7 @@ fun FridgeItemCard(item: FridgeItem, updateQuantity: (Int) -> Unit) {
                                     updateQuantity(quantity)
                                 }
                             },
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp).testTag("decreaseButton")
                         ) {
                             Icon(Icons.Filled.Remove, contentDescription = "Decrease")
                         }
@@ -96,7 +99,7 @@ fun FridgeItemCard(item: FridgeItem, updateQuantity: (Int) -> Unit) {
                                 quantity++
                                 updateQuantity(quantity)
                             },
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp).testTag("increaseButton")
                         ) {
                             Icon(Icons.Filled.Add, contentDescription = "Increase")
                         }

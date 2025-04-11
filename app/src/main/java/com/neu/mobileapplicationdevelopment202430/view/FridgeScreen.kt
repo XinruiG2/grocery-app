@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import android.util.Log
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
@@ -72,6 +73,7 @@ fun FridgeScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 15.dp)
+                    .testTag("title")
                     .drawBehind {
                         drawLine(
                             color = Color.Black,
@@ -95,7 +97,7 @@ fun FridgeScreen(navController: NavHostController) {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center).testTag("loading"))
                 }
             } else if (errorMessage != null) {
                 Box(
@@ -105,27 +107,35 @@ fun FridgeScreen(navController: NavHostController) {
                         text = errorMessage!!,
                         color = Color.Black,
                         fontSize = 22.sp,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center).testTag("error")
                     )
                 }
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(fridgeItems ?: emptyList()) { item ->
-                        FridgeItemCard(
-                            item = item,
-                            updateQuantity = { newQuantity ->
-                                fridgeVM.updateItemQuantity(userId, item.name, newQuantity)
+                if (fridgeItems.isNullOrEmpty()) {
+                    Text(
+                        text = "No reminders available",
+                        modifier = Modifier.testTag("emptyFridge"),
+                        color = Color.Black,
+                        fontSize = 22.sp
+                    )
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize().testTag("fridgeItems")) {
+                        items(fridgeItems ?: emptyList()) { item ->
+                            FridgeItemCard(
+                                item = item,
+                                updateQuantity = { newQuantity ->
+                                    fridgeVM.updateItemQuantity(userId, item.name, newQuantity)
 //                            if (newQuantity == 0) {
 //                                items = items.filterNot { it.name == item.name }
 //                            }
-                            }
-                        )
+                                }
+                            )
+                        }
                     }
                 }
             }
-
         }
 
-        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
+        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter).testTag("footerNav"))
     }
 }

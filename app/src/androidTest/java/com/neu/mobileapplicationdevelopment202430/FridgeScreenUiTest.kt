@@ -10,7 +10,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.neu.mobileapplicationdevelopment202430.view.IngredientsScreen
+import com.neu.mobileapplicationdevelopment202430.view.FridgeScreen
 import com.neu.mobileapplicationdevelopment202430.view.RemindersScreen
 import org.junit.Before
 import org.junit.Rule
@@ -18,7 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IngredientsScreenUiTest {
+class FridgeScreenUiTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
@@ -26,7 +26,7 @@ class IngredientsScreenUiTest {
     fun setUp() {
         composeTestRule.setContent {
             MaterialTheme {
-                IngredientsScreen(navController = androidx.navigation.compose.rememberNavController())
+                FridgeScreen(navController = androidx.navigation.compose.rememberNavController())
             }
         }
     }
@@ -42,8 +42,8 @@ class IngredientsScreenUiTest {
     }
 
     @Test
-    fun testIngredientsListExists() {
-        composeTestRule.onNodeWithTag("ingredients").assertDoesNotExist()
+    fun testReminderListExists() {
+        composeTestRule.onNodeWithTag("fridgeItems").assertDoesNotExist()
     }
 
     @Test
@@ -52,7 +52,7 @@ class IngredientsScreenUiTest {
     }
 
     @Test
-    fun testIngredientsListOrErrorAppearsAfterLoading() {
+    fun testLoadingFunctionality() {
         composeTestRule.onNodeWithTag("loading").assertExists()
 
         composeTestRule.waitUntil(
@@ -62,15 +62,15 @@ class IngredientsScreenUiTest {
             }
         )
 
-        val listExists = composeTestRule.onAllNodesWithTag("ingredients").fetchSemanticsNodes().isNotEmpty()
+        val listExists = composeTestRule.onAllNodesWithTag("fridgeItems").fetchSemanticsNodes().isNotEmpty()
         val errorExists = composeTestRule.onAllNodesWithTag("error").fetchSemanticsNodes().isNotEmpty()
-        val emptyExists = composeTestRule.onAllNodesWithTag("emptyIngredients").fetchSemanticsNodes().isNotEmpty()
+        val emptyExists = composeTestRule.onAllNodesWithTag("emptyFridge").fetchSemanticsNodes().isNotEmpty()
 
         assert(listExists || errorExists || emptyExists)
     }
 
     @Test
-    fun testIngredientCardAppearsWhenListIsNotEmpty() {
+    fun testFridgeCardAppearsWhenListIsNotEmpty() {
         composeTestRule.waitUntil(
             timeoutMillis = 5000,
             condition = {
@@ -78,9 +78,9 @@ class IngredientsScreenUiTest {
             }
         )
 
-        val listExists = composeTestRule.onAllNodesWithTag("ingredients").fetchSemanticsNodes().isNotEmpty()
+        val listExists = composeTestRule.onAllNodesWithTag("fridgeItems").fetchSemanticsNodes().isNotEmpty()
         if (listExists) {
-            val cards = composeTestRule.onAllNodesWithTag("ingredientCard")
+            val cards = composeTestRule.onAllNodesWithTag("fridgeCard")
             assert(cards.fetchSemanticsNodes().isNotEmpty())
         }
     }
@@ -96,7 +96,7 @@ class IngredientsScreenUiTest {
 
         val errorExists = composeTestRule.onAllNodesWithTag("error").fetchSemanticsNodes().isNotEmpty()
         if (errorExists) {
-            composeTestRule.onNodeWithText("Ingredients unavailable right now").assertExists()
+            composeTestRule.onNodeWithText("Fridge Items unavailable right now").assertExists()
         }
     }
 

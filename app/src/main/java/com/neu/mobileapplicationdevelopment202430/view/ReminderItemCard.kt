@@ -53,6 +53,7 @@ fun ReminderItemCard(item: ReminderItem) {
                 Text(
                     text = item.name,
                     fontSize = 16.sp,
+                    modifier = Modifier.testTag("name")
                 )
 
                 Spacer(modifier = Modifier.height(5.dp))
