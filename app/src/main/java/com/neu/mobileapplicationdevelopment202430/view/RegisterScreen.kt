@@ -48,7 +48,7 @@ fun RegisterScreen(navController: NavHostController) {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center).testTag("loading"))
         }
     } else {
         Column(

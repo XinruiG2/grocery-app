@@ -9,12 +9,13 @@ import com.neu.mobileapplicationdevelopment202430.view.RegisterScreen
 import org.junit.Rule
 import org.junit.Test
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.neu.mobileapplicationdevelopment202430.view.LoginScreen
 import com.neu.mobileapplicationdevelopment202430.view.RemindersScreen
 import org.junit.Before
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class RegisterScreenUiTest {
+class LoginScreenUiTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
@@ -22,7 +23,7 @@ class RegisterScreenUiTest {
     fun setUp() {
         composeTestRule.setContent {
             MaterialTheme {
-                RegisterScreen(navController = rememberNavController())
+                LoginScreen(navController = rememberNavController())
             }
         }
     }
@@ -53,21 +54,21 @@ class RegisterScreenUiTest {
     }
 
     @Test
-    fun testSignupButton() {
-        composeTestRule.onNodeWithTag("signupButton").assertExists().assertIsEnabled().performClick()
+    fun testLoginButton() {
+        composeTestRule.onNodeWithTag("loginButton").assertExists().assertIsEnabled().performClick()
     }
 
     @Test
-    fun testLoginText() {
-        composeTestRule.onNodeWithTag("login").assertExists().assertHasClickAction()
+    fun testSignupText() {
+        composeTestRule.onNodeWithTag("signup").assertExists().assertHasClickAction()
     }
 
     @Test
-    fun testRegisterButtonClicking() {
-        composeTestRule.onNodeWithTag("username").performTextInput("admin")
-        composeTestRule.onNodeWithTag("password").performTextInput("admin")
+    fun testLoginButtonClicking() {
+        composeTestRule.onNodeWithTag("username").performTextInput("wronguser")
+        composeTestRule.onNodeWithTag("password").performTextInput("wrongpass")
 
-        composeTestRule.onNodeWithTag("signupButton").performClick()
+        composeTestRule.onNodeWithTag("loginButton").performClick()
 
         composeTestRule.waitUntil(timeoutMillis = 3000) {
             composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isNotEmpty()
@@ -77,4 +78,5 @@ class RegisterScreenUiTest {
             composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isEmpty()
         }
     }
+
 }

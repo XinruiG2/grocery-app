@@ -5,19 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="RemindersScreenUiTest">
+      <SelectionState runConfigName="LoginScreenUiTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ReminderItemUiTest">
+      <SelectionState runConfigName="testLoadingExists()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testErrorMessageText()">
+      <SelectionState runConfigName="testLoadingExists() (1)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testErrorMessageText() (1)">
+      <SelectionState runConfigName="testLoginButtonClicking()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="RecipeItemUiTest">
+      <SelectionState runConfigName="testRegisterButtonClicking()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

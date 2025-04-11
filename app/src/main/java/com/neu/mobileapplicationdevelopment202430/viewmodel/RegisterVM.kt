@@ -19,6 +19,9 @@ class RegisterVM(private val repository: FoodRepository) : ViewModel() {
     val errorMessage: LiveData<String?> get() = _errorMessage
 
     fun validSignUpOrNot(username: String, password: String) {
+        _isLoading.value = true
+        _errorMessage.value = null
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val signupResponse = repository.signup(username, password)
