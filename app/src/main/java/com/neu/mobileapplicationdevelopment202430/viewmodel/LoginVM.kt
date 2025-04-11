@@ -35,7 +35,7 @@ class LoginVM(private val repository: FoodRepository) : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                Log.e("LoginVM", "FOUND AN ERROR!: ${e.message}")
+//                Log.e("LoginVM", "FOUND AN ERROR!: ${e.message}")
 
                 withContext(Dispatchers.Main) {
                     _errorMessage.value = e.toString()

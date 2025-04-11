@@ -28,7 +28,10 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
 
-    debug {}
+    debug {
+      enableUnitTestCoverage = true
+      enableAndroidTestCoverage = true
+    }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -128,6 +131,7 @@ dependencies {
 
   // Dependencies for local unit tests
   testImplementation("junit:junit:4.13.2")
+  testImplementation("org.robolectric:robolectric:4.10.3")
   testImplementation("org.hamcrest:hamcrest-all:1.3")
   testImplementation("androidx.arch.core:core-testing:2.2.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
@@ -136,6 +140,10 @@ dependencies {
   androidTestImplementation("junit:junit:4.13.2")
   androidTestImplementation("org.mockito:mockito-core:3.4.6")
   androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+  androidTestImplementation("androidx.test:runner:1.5.2")
+  androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+  androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
 
   // rxjava
   implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
