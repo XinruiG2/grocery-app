@@ -19,10 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
-import com.neu.mobileapplicationdevelopment202430.model.FridgeVMCreator
-import com.neu.mobileapplicationdevelopment202430.model.GroceryVMCreator
-import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
-import com.neu.mobileapplicationdevelopment202430.model.ReminderItem
+import androidx.compose.ui.platform.testTag
 import com.neu.mobileapplicationdevelopment202430.model.ReminderVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.UserInformation
 import com.neu.mobileapplicationdevelopment202430.viewmodel.FridgeVM
@@ -59,6 +56,7 @@ fun RemindersScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 15.dp)
+                    .testTag("title")
                     .drawBehind {
                         drawLine(
                             color = Color.Black,
@@ -74,13 +72,13 @@ fun RemindersScreen(navController: NavHostController) {
 
             if (isLoading == true) {
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize().testTag("loading")
                 ) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             } else if (errorMessage != null) {
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize().testTag("error")
                 ) {
                     Text(
                         text = errorMessage!!,
@@ -90,13 +88,22 @@ fun RemindersScreen(navController: NavHostController) {
                     )
                 }
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(reminders ?: emptyList()) { reminder ->
-                        ReminderItemCard(item = reminder)
+                if (reminders.isNullOrEmpty()) {
+                    Text(
+                        text = "No reminders available",
+                        modifier = Modifier.testTag("emptyReminders"),
+                        color = Color.Black,
+                        fontSize = 22.sp
+                    )
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize().testTag("remindersList")) {
+                        items(reminders ?: emptyList()) { reminder ->
+                            ReminderItemCard(item = reminder)
+                        }
                     }
                 }
             }
         }
-        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
+        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter).testTag("footerNav"))
     }
 }

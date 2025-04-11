@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +45,7 @@ fun ExpandedRecipeCard(recipe: RecipeItem, onBack: () -> Unit) {
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(20.dp)
+            .testTag("expandedRecipeCard")
             .padding(bottom = 15.dp)
             .border(width = 1.dp, color = Color.Gray, shape = RectangleShape)
     ) {
@@ -56,14 +58,15 @@ fun ExpandedRecipeCard(recipe: RecipeItem, onBack: () -> Unit) {
             },
             backgroundColor = Color.Black,
             contentColor = Color.White,
-            elevation = 4.dp
+            elevation = 4.dp,
+            modifier = Modifier.testTag("topBar")
         )
 
         GlideImage(
             model = recipe.imageUrl,
             contentDescription = recipe.name,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth().height(300.dp),
+            modifier = Modifier.fillMaxWidth().height(300.dp).testTag("image"),
         )
 
         Column(modifier = Modifier
@@ -71,17 +74,27 @@ fun ExpandedRecipeCard(recipe: RecipeItem, onBack: () -> Unit) {
             .padding(horizontal = 15.dp)) {
             Spacer(modifier = Modifier.height(15.dp))
 
-            Text(text = recipe.name, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = recipe.name,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.testTag("name")
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Ingredients:", fontSize = 26.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                "Ingredients:",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.testTag("ingredientsHeader")
+            )
             val ingredientList = recipe.ingredients.split(",").map { it.trim().capitalize() }
 
             Spacer(modifier = Modifier.height(5.dp))
 
             ingredientList.forEach { ingredient ->
-                Text("• $ingredient", fontSize = 18.sp)
+                Text("• $ingredient", fontSize = 18.sp, modifier = Modifier.testTag("ingredient"))
             }
 
             Spacer(modifier = Modifier.height(15.dp))

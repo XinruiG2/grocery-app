@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -47,7 +48,7 @@ fun RegisterScreen(navController: NavHostController) {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center).testTag("loading"))
         }
     } else {
         Column(
@@ -61,13 +62,13 @@ fun RegisterScreen(navController: NavHostController) {
                 text = "Sign Up",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 16.dp).testTag("title")
             )
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
                 label = { Text("username") },
-                modifier = Modifier.fillMaxWidth(0.93f),
+                modifier = Modifier.fillMaxWidth(0.93f).testTag("username"),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color(0xFF800080),
                     unfocusedBorderColor = Color.Gray
@@ -79,14 +80,14 @@ fun RegisterScreen(navController: NavHostController) {
                 onValueChange = { password = it },
                 label = { Text("password") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(0.93f),
+                modifier = Modifier.fillMaxWidth(0.93f).testTag("password"),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color(0xFF800080),
                     unfocusedBorderColor = Color.Gray
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
+            Button(modifier = Modifier.testTag("signupButton"), onClick = {
                 registerVM.validSignUpOrNot(username, password)
             }) {
                 Text("sign up")
@@ -99,6 +100,7 @@ fun RegisterScreen(navController: NavHostController) {
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
                     .padding(top = 12.dp, bottom = 6.dp)
+                    .testTag("login")
                     .clickable {
                         navController.navigate(NavigationItem.Login.route)
                     }

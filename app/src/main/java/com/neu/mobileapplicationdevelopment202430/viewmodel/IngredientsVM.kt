@@ -37,7 +37,7 @@ class IngredientsVM(private val repository: FoodRepository) : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                Log.e("IngredientsVM", "FOUND AN ERROR!: ${e.message}")
+//                Log.e("IngredientsVM", "FOUND AN ERROR!: ${e.message}")
 
                 val storedIngredients = repository.getIngredientsFromDatabase()
                 withContext(Dispatchers.Main) {

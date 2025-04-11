@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.Icon
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun DropDown(
@@ -45,11 +46,11 @@ fun DropDown(
         ) {
             Text(
                 text = selectedOption,
-                modifier = Modifier.weight(1f).padding(start = 10.dp)
+                modifier = Modifier.weight(1f).padding(start = 10.dp).testTag("option")
             )
             IconButton(
                 onClick = { expanded = !expanded },
-                modifier = Modifier.padding(0.dp)
+                modifier = Modifier.padding(0.dp).testTag("dropdownButton")
             ) {
                 Icon(
                     imageVector = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
@@ -61,10 +62,12 @@ fun DropDown(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag("dropdown")
         ) {
             options.forEach { option ->
-                DropdownMenuItem(onClick = {
+                DropdownMenuItem(
+                    modifier = Modifier.testTag("dropdownOption"),
+                    onClick = {
                     onOptionSelected(option)
                     expanded = false
                 }) {

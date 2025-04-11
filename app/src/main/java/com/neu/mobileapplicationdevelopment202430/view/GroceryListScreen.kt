@@ -21,7 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
@@ -95,6 +97,7 @@ fun GroceryListScreen(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 15.dp)
+                            .testTag("title")
                             .drawBehind {
                                 drawLine(
                                     color = Color.Black,
@@ -110,7 +113,7 @@ fun GroceryListScreen(navController: NavHostController) {
                         Box(
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center).testTag("loading"))
                         }
                     } else if (errorMessage != null) {
                         Box(
@@ -120,11 +123,11 @@ fun GroceryListScreen(navController: NavHostController) {
                                 text = errorMessage!!,
                                 color = Color.Black,
                                 fontSize = 22.sp,
-                                modifier = Modifier.align(Alignment.Center)
+                                modifier = Modifier.align(Alignment.Center).testTag("error")
                             )
                         }
                     } else {
-                        LazyColumn() {
+                        LazyColumn(modifier = Modifier.testTag("groceryList")) {
                             items(groceryItems ?: emptyList()) { item ->
                                 Row(
                                     modifier = Modifier
@@ -133,6 +136,7 @@ fun GroceryListScreen(navController: NavHostController) {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Checkbox(
+                                        modifier = Modifier.testTag("checkbox"),
                                         checked = checkedItems.contains(item),
                                         onCheckedChange = { isChecked ->
                                             checkedItems = if (isChecked) {
@@ -145,9 +149,10 @@ fun GroceryListScreen(navController: NavHostController) {
                                     Text(
                                         text = "${item.name}, ${item.quantity}",
                                         fontSize = 18.sp,
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.weight(1f).testTag("ingredient")
                                     )
                                     IconButton(
+                                        modifier = Modifier.testTag("remove"),
                                         onClick = { groceryVM.deleteGroceryItem(userId, item) }
                                     ) {
                                         Icon(
@@ -171,11 +176,13 @@ fun GroceryListScreen(navController: NavHostController) {
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Button(
+                        modifier = Modifier.testTag("addToListButton"),
                         onClick = { showAddItemPopup = true }
                     ) {
                         Text(text = "Add to Grocery List")
                     }
                     Button(
+                        modifier = Modifier.testTag("addToFridgeButton"),
                         onClick = {
                             coroutineScope.launch {
                                 fridgeVM.addToOrUpdateGroceryList(
@@ -191,96 +198,102 @@ fun GroceryListScreen(navController: NavHostController) {
             }
         }
 
-        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
+        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter).testTag("footerNav"))
     }
 
     if (showAddItemPopup) {
-        AlertDialog(
-            onDismissRequest = { showAddItemPopup = false },
-            title = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "",
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
-                }
-            },
-            text = {
-                Column {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Item:", fontSize = 16.sp, modifier = Modifier.padding(end = 12.dp))
-                        Spacer(modifier = Modifier.width(3.dp))
-                        DropDown(
-                            options = itemOptions,
-                            selectedOption = selectedItemName,
-                            onOptionSelected = { selectedItemName = it }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
+            AlertDialog(
+                onDismissRequest = { showAddItemPopup = false },
+                modifier = Modifier.testTag("addDialog"),
+                title = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Quantity:",
-                            fontSize = 16.sp,
-                            modifier = Modifier.padding(end = 12.dp)
+                            text = "",
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
-
-                        IconButton(
-                            onClick = { if (selectedItemQuantity > 1) selectedItemQuantity-- },
-                            modifier = Modifier.size(32.dp)
+                    }
+                },
+                text = {
+                    Column {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.Remove, contentDescription = "Decrease")
+                            Text(
+                                text = "Item:",
+                                fontSize = 16.sp,
+                                modifier = Modifier.padding(end = 12.dp).testTag("itemToAdd")
+                            )
+                            Spacer(modifier = Modifier.width(3.dp))
+                            DropDown(
+                                options = itemOptions,
+                                selectedOption = selectedItemName,
+                                onOptionSelected = { selectedItemName = it }
+                            )
                         }
 
-                        Text(
-                            text = "$selectedItemQuantity",
-                            fontSize = 18.sp,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        IconButton(
-                            onClick = { selectedItemQuantity++ },
-                            modifier = Modifier.size(32.dp)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "Increase")
+                            Text(
+                                text = "Quantity:",
+                                fontSize = 16.sp,
+                                modifier = Modifier.padding(end = 12.dp).testTag("quantityToAdd")
+                            )
+
+                            IconButton(
+                                onClick = { if (selectedItemQuantity > 1) selectedItemQuantity-- },
+                                modifier = Modifier.size(32.dp).testTag("decreaseButton")
+                            ) {
+                                Icon(Icons.Default.Remove, contentDescription = "Decrease")
+                            }
+
+                            Text(
+                                text = "$selectedItemQuantity",
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                                    .testTag("quantityNum")
+                            )
+
+                            IconButton(
+                                onClick = { selectedItemQuantity++ },
+                                modifier = Modifier.size(32.dp).testTag("increaseButton")
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = "Increase")
+                            }
                         }
                     }
-                }
-            },
-            confirmButton = {
-                Button(
-                    modifier = Modifier.padding(end = 15.dp, bottom = 9.dp),
-                    onClick = {
-                        groceryVM.addGroceryItem(userId, selectedItemName, selectedItemQuantity)
-                        showAddItemPopup = false
+                },
+                confirmButton = {
+                    Button(
+                        modifier = Modifier.padding(end = 15.dp, bottom = 9.dp)
+                            .testTag("confirmDialogButton"),
+                        onClick = {
+                            groceryVM.addGroceryItem(userId, selectedItemName, selectedItemQuantity)
+                            showAddItemPopup = false
+                        }
+                    ) {
+                        Text("Add to List")
                     }
-                ) {
-                    Text("Add to List")
+                },
+                dismissButton = {
+                    Button(
+                        modifier = Modifier.padding(bottom = 9.dp).testTag("cancelDialogButton"),
+                        onClick = { showAddItemPopup = false }) {
+                        Text("Cancel")
+                    }
                 }
-            },
-            dismissButton = {
-                Button(
-                    modifier = Modifier.padding(bottom = 9.dp),
-                    onClick = { showAddItemPopup = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
-
+            )
+        }
 }

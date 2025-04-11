@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,6 +58,7 @@ fun IngredientsScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 15.dp)
+                    .testTag("title")
                     .drawBehind {
                         drawLine(
                             color = Color.Black,
@@ -74,7 +76,7 @@ fun IngredientsScreen(navController: NavHostController) {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center).testTag("loading"))
                 }
             } else if (errorMessage != null) {
                 Box(
@@ -84,17 +86,26 @@ fun IngredientsScreen(navController: NavHostController) {
                         text = errorMessage!!,
                         color = Color.Black,
                         fontSize = 22.sp,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center).testTag("error")
                     )
                 }
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(ingredients ?: emptyList()) { ingredient ->
-                        IngredientItemCard(item = ingredient)
+                if (ingredients.isNullOrEmpty()) {
+                    Text(
+                        text = "No ingredients available",
+                        modifier = Modifier.testTag("emptyIngredients"),
+                        color = Color.Black,
+                        fontSize = 22.sp
+                    )
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize().testTag("ingredients")) {
+                        items(ingredients ?: emptyList()) { ingredient ->
+                            IngredientItemCard(item = ingredient)
+                        }
                     }
                 }
             }
         }
-        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
+        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter).testTag("footerNav"))
     }
 }

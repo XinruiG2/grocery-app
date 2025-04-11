@@ -20,6 +20,9 @@ class LoginVM(private val repository: FoodRepository) : ViewModel() {
     val errorMessage: LiveData<String?> get() = _errorMessage
 
     fun validUserOrNot(username: String, password: String) {
+        _isLoading.value = true
+        _errorMessage.value = null
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val loginResponse = repository.login(username, password)
@@ -35,7 +38,7 @@ class LoginVM(private val repository: FoodRepository) : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                Log.e("LoginVM", "FOUND AN ERROR!: ${e.message}")
+//                Log.e("LoginVM", "FOUND AN ERROR!: ${e.message}")
 
                 withContext(Dispatchers.Main) {
                     _errorMessage.value = e.toString()

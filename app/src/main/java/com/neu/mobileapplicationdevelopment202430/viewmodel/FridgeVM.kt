@@ -42,7 +42,7 @@ class FridgeVM(private val repository: FoodRepository, private val userId : Int,
                     }
                 }
             } catch (e: Exception) {
-                Log.e("FridgeVM", "FOUND AN ERROR!: ${e.message}")
+//                Log.e("FridgeVM", "FOUND AN ERROR!: ${e.message}")
 
                 val storedFridgeItems = repository.getFridgeItemsFromDatabase()
                 withContext(Dispatchers.Main) {
@@ -78,14 +78,14 @@ class FridgeVM(private val repository: FoodRepository, private val userId : Int,
         val ingredientsMap = ingredients.associateBy { it.name }
         val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
-        Log.e("FridgeVM", "In add or update method")
+//        Log.e("FridgeVM", "In add or update method")
 
         for (groceryItem in groceryItems) {
             val ingredient = ingredientsMap[groceryItem.name]
             val imageUrl = ingredient?.imageUrl ?: ""
 
             val existing = repository.getByName(groceryItem.name)
-            Log.e("FridgeVM", "existing? ${existing}")
+//            Log.e("FridgeVM", "existing? ${existing}")
 
             if (existing != null) {
                 val newQuantity = existing.quantity + groceryItem.quantity

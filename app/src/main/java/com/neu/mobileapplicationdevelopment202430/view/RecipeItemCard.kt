@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ fun RecipeItemCard(item: RecipeItem, onReadMore: (RecipeItem) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(max = maxHeight)
+            .testTag("recipeCard")
             .padding(vertical = 8.dp, horizontal = 8.dp),
         elevation = 4.dp
         ) {
@@ -46,6 +48,7 @@ fun RecipeItemCard(item: RecipeItem, onReadMore: (RecipeItem) -> Unit) {
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f)
+                        .testTag("image")
                         .padding(0.dp)
                 )
 
@@ -59,6 +62,7 @@ fun RecipeItemCard(item: RecipeItem, onReadMore: (RecipeItem) -> Unit) {
                     Text(
                         text = item.name,
                         fontSize = 16.sp,
+                        modifier = Modifier.testTag("name")
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
@@ -66,14 +70,15 @@ fun RecipeItemCard(item: RecipeItem, onReadMore: (RecipeItem) -> Unit) {
                     Text(
                         text = item.description,
                         fontSize = 16.sp,
-                        color = Color.Black
+                        color = Color.Black,
+                        modifier = Modifier.testTag("description")
                     )
 
                     Spacer(modifier = Modifier.height(5.dp))
 
                     TextButton(
                         onClick = { onReadMore(item) },
-                        modifier = Modifier.padding(0.dp)
+                        modifier = Modifier.padding(0.dp).testTag("readMoreButton")
                     ) {
                         Text("Read more...", color = Color.Gray)
                     }

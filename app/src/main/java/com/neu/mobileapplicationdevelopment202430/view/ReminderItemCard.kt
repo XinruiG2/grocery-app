@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -27,6 +28,7 @@ fun ReminderItemCard(item: ReminderItem) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(max = maxHeight)
+            .testTag("reminderItemCard")
             .padding(vertical = 8.dp, horizontal = 8.dp),
         elevation = 4.dp
     ) {
@@ -37,6 +39,7 @@ fun ReminderItemCard(item: ReminderItem) {
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f)
+                    .testTag("reminderImage")
                     .padding(0.dp)
             )
 
@@ -50,6 +53,7 @@ fun ReminderItemCard(item: ReminderItem) {
                 Text(
                     text = item.name,
                     fontSize = 16.sp,
+                    modifier = Modifier.testTag("name")
                 )
 
                 Spacer(modifier = Modifier.height(5.dp))
