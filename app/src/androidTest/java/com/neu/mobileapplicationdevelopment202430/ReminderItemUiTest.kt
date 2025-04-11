@@ -40,19 +40,19 @@ class ReminderItemUiTest {
     }
 
     @Test
-    fun testNameIsDisplayed() {
+    fun testNameExists() {
         composeTestRule.onNodeWithText(testReminder.name).assertIsDisplayed()
     }
 
     @Test
-    fun testExpirationTextIsDisplayed() {
+    fun testExpirationTextExists() {
         val expirationText = "Expires in: ${testReminder.numDaysTilExpired} days"
         composeTestRule.onNodeWithText(expirationText).assertIsDisplayed()
     }
 
     @Test
     fun testCardExists() {
-        composeTestRule.onNodeWithTag("reminderItemCard_Egg").assertExists()
+        composeTestRule.onNodeWithTag("reminderItemCard").assertExists()
     }
 
     @Test

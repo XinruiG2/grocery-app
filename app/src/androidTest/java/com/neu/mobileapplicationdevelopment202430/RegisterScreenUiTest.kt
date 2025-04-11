@@ -14,7 +14,7 @@ import org.junit.Before
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class RegisterScreenUITest {
+class RegisterScreenUiTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
@@ -33,7 +33,7 @@ class RegisterScreenUITest {
     }
 
     @Test
-    fun testTextFieldsAcceptInput() {
+    fun testUsernameAndPasswordTextFields() {
         composeTestRule.onNodeWithTag("username").assertExists()
         composeTestRule.onNodeWithTag("password").assertExists()
 
@@ -53,7 +53,7 @@ class RegisterScreenUITest {
     }
 
     @Test
-    fun testLoginTextNavigates() {
+    fun testLoginText() {
         composeTestRule.onNodeWithTag("login").assertExists().assertHasClickAction()
     }
 }

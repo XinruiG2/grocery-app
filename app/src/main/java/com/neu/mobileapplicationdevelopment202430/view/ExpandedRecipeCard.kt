@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +45,7 @@ fun ExpandedRecipeCard(recipe: RecipeItem, onBack: () -> Unit) {
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(20.dp)
+            .testTag("expandedRecipeCard")
             .padding(bottom = 15.dp)
             .border(width = 1.dp, color = Color.Gray, shape = RectangleShape)
     ) {

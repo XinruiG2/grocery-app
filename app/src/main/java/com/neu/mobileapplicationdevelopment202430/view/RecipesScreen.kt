@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -76,6 +77,7 @@ fun RecipesScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 15.dp)
+                    .testTag("title")
                     .drawBehind {
                         drawLine(
                             color = Color.Black,
@@ -93,7 +95,7 @@ fun RecipesScreen(navController: NavHostController) {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center).testTag("loading"))
                 }
             } else if (errorMessage != null) {
                 Box(
@@ -103,7 +105,7 @@ fun RecipesScreen(navController: NavHostController) {
                         text = errorMessage!!,
                         color = Color.Black,
                         fontSize = 22.sp,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center).testTag("error")
                     )
                 }
             } else {
@@ -118,22 +120,32 @@ fun RecipesScreen(navController: NavHostController) {
                         label = { Text("Ingredients separated by commas") },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .testTag("searchBar")
                             .padding(vertical = 5.dp, horizontal = 8.dp)
                     )
-                    LazyColumn {
-                        items(filteredRecipes ?: emptyList()) { recipe ->
-                            RecipeItemCard(
-                                item = recipe,
-                                onReadMore = {
-                                    expandRecipe = it
-                                }
-                            )
+                    if (filteredRecipes.isNullOrEmpty()) {
+                        Text(
+                            text = "No recipes available",
+                            modifier = Modifier.testTag("emptyRecipes"),
+                            color = Color.Black,
+                            fontSize = 22.sp
+                        )
+                    } else {
+                        LazyColumn(modifier = Modifier.fillMaxSize().testTag("recipesList")) {
+                            items(filteredRecipes) { recipe ->
+                                RecipeItemCard(
+                                    item = recipe,
+                                    onReadMore = {
+                                        expandRecipe = it
+                                    }
+                                )
+                            }
                         }
                     }
                 }
             }
         }
 
-        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
+        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter).testTag("footerNav"))
     }
 }

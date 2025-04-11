@@ -1,23 +1,19 @@
 package com.neu.mobileapplicationdevelopment202430
 
 import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.neu.mobileapplicationdevelopment202430.view.RemindersScreen
-import org.junit.Before
+import androidx.navigation.compose.rememberNavController
 import org.junit.Rule
 import org.junit.Test
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.neu.mobileapplicationdevelopment202430.view.RecipesScreen
+import org.junit.Before
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class RemindersScreenUiTest {
+class RecipesScreenUiTest {
     @get: Rule
     val composeTestRule = createComposeRule()
 
@@ -25,7 +21,7 @@ class RemindersScreenUiTest {
     fun setUp() {
         composeTestRule.setContent {
             MaterialTheme {
-                RemindersScreen(navController = androidx.navigation.compose.rememberNavController())
+                RecipesScreen(navController = rememberNavController())
             }
         }
     }
@@ -41,17 +37,7 @@ class RemindersScreenUiTest {
     }
 
     @Test
-    fun testReminderListExists() {
-        composeTestRule.onNodeWithTag("reminderList").assertDoesNotExist()
-    }
-
-    @Test
-    fun testErrorMessageExists() {
-        composeTestRule.onNodeWithTag("error").assertDoesNotExist()
-    }
-
-    @Test
-    fun testRemindersListOrErrorAppearsAfterLoading() {
+    fun testSearchBarAfterLoading() {
         composeTestRule.onNodeWithTag("loading").assertExists()
 
         composeTestRule.waitUntil(
@@ -61,15 +47,19 @@ class RemindersScreenUiTest {
             }
         )
 
-        val listExists = composeTestRule.onAllNodesWithTag("remindersList").fetchSemanticsNodes().isNotEmpty()
-        val errorExists = composeTestRule.onAllNodesWithTag("error").fetchSemanticsNodes().isNotEmpty()
-        val emptyExists = composeTestRule.onAllNodesWithTag("emptyReminders").fetchSemanticsNodes().isNotEmpty()
-
-        assert(listExists || errorExists || emptyExists)
+        val searchExists = composeTestRule.onAllNodesWithTag("searchBar").fetchSemanticsNodes().isNotEmpty()
+        if (searchExists) {
+            val searchBar = composeTestRule.onNodeWithTag("searchBar")
+            searchBar.assertExists()
+            searchBar.performTextInput("pasta")
+            searchBar.assertTextContains("pasta")
+        }
     }
 
     @Test
-    fun testReminderCardAppearsWhenListIsNotEmpty() {
+    fun testConditionalAppearsAfterLoading() {
+        composeTestRule.onNodeWithTag("loading").assertExists()
+
         composeTestRule.waitUntil(
             timeoutMillis = 5000,
             condition = {
@@ -77,9 +67,26 @@ class RemindersScreenUiTest {
             }
         )
 
-        val listExists = composeTestRule.onAllNodesWithTag("remindersList").fetchSemanticsNodes().isNotEmpty()
+        val listExists = composeTestRule.onAllNodesWithTag("recipesList").fetchSemanticsNodes().isNotEmpty()
+        val errorExists = composeTestRule.onAllNodesWithTag("error").fetchSemanticsNodes().isNotEmpty()
+        val emptyExists = composeTestRule.onAllNodesWithTag("emptyRecipes").fetchSemanticsNodes().isNotEmpty()
+        val searchExists = composeTestRule.onAllNodesWithTag("searchBar").fetchSemanticsNodes().isNotEmpty()
+
+        assert(listExists || errorExists || emptyExists || searchExists)
+    }
+
+    @Test
+    fun testRecipeCardAppearsWhenListIsNotEmpty() {
+        composeTestRule.waitUntil(
+            timeoutMillis = 5000,
+            condition = {
+                composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isEmpty()
+            }
+        )
+
+        val listExists = composeTestRule.onAllNodesWithTag("recipesList").fetchSemanticsNodes().isNotEmpty()
         if (listExists) {
-            val cards = composeTestRule.onAllNodesWithTag("reminderItemCard")
+            val cards = composeTestRule.onAllNodesWithTag("recipeCard")
             assert(cards.fetchSemanticsNodes().isNotEmpty())
         }
     }
@@ -95,20 +102,12 @@ class RemindersScreenUiTest {
 
         val errorExists = composeTestRule.onAllNodesWithTag("error").fetchSemanticsNodes().isNotEmpty()
         if (errorExists) {
-            composeTestRule.onNodeWithText("Reminders unavailable right now").assertExists()
+            composeTestRule.onNodeWithText("Recipes unavailable right now").assertExists()
         }
     }
 
     @Test
     fun testFooterNavigationExists() {
-        composeTestRule.waitUntil(
-            timeoutMillis = 5000,
-            condition = {
-                composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isEmpty()
-            }
-        )
-
         composeTestRule.onNodeWithTag("footerNav").assertExists()
     }
-
 }

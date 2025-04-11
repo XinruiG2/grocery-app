@@ -28,7 +28,7 @@ fun ReminderItemCard(item: ReminderItem) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(max = maxHeight)
-            .testTag("reminderItemCard_${item.name}")
+            .testTag("reminderItemCard")
             .padding(vertical = 8.dp, horizontal = 8.dp),
         elevation = 4.dp
     ) {

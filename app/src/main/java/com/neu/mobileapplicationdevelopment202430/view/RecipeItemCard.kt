@@ -37,7 +37,7 @@ fun RecipeItemCard(item: RecipeItem, onReadMore: (RecipeItem) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(max = maxHeight)
-            .testTag("reminderCard_${item.name}")
+            .testTag("recipeCard")
             .padding(vertical = 8.dp, horizontal = 8.dp),
         elevation = 4.dp
         ) {
