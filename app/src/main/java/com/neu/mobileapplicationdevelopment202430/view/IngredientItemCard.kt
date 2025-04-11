@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -26,6 +27,7 @@ fun IngredientItemCard(item: IngredientItem) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(max = maxHeight)
+            .testTag("ingredientCard")
             .padding(vertical = 8.dp, horizontal = 8.dp),
         elevation = 4.dp
     ) {
@@ -37,6 +39,7 @@ fun IngredientItemCard(item: IngredientItem) {
                     .fillMaxSize()
                     .weight(1f)
                     .padding(0.dp)
+                    .testTag("image")
             )
 
             Column(
@@ -49,6 +52,7 @@ fun IngredientItemCard(item: IngredientItem) {
                 Text(
                     text = item.name,
                     fontSize = 16.sp,
+                    modifier = Modifier.testTag("name")
                 )
 
                 Spacer(modifier = Modifier.height(5.dp))
@@ -56,7 +60,8 @@ fun IngredientItemCard(item: IngredientItem) {
                 Text(
                     text = "Good for: ${item.numDaysGoodFor} days",
                     fontSize = 16.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    modifier = Modifier.testTag("freshness")
                 )
 
                 Spacer(modifier = Modifier.height(5.dp))
@@ -64,7 +69,8 @@ fun IngredientItemCard(item: IngredientItem) {
                 Text(
                     text = "Used in: ${item.numRecipesUsedIn} recipes",
                     fontSize = 16.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    modifier = Modifier.testTag("numRecipes")
                 )
             }
         }
