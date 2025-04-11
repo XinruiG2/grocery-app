@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -35,6 +36,7 @@ fun FooterNavigation(navController: NavHostController, modifier: Modifier = Modi
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
+                modifier = Modifier.testTag("nav_grocery"),
                 onClick = {navController.navigate(NavigationItem.GroceryList.route)}) {
                 Icon(
                     imageVector = Icons.Default.Description,
@@ -42,28 +44,36 @@ fun FooterNavigation(navController: NavHostController, modifier: Modifier = Modi
                     tint = if (currentSelection == NavigationItem.GroceryList.route) iconSelectedColor else Color.Black
                 )
             }
-            IconButton(onClick = {navController.navigate(NavigationItem.Reminders.route)}) {
+            IconButton(
+                modifier = Modifier.testTag("nav_reminders"),
+                onClick = {navController.navigate(NavigationItem.Reminders.route)}) {
                 Icon(
                     imageVector = Icons.Default.AccessTime,
                     contentDescription = "Reminders",
                     tint = if (currentSelection == NavigationItem.Reminders.route) iconSelectedColor else Color.Black
                 )
             }
-            IconButton(onClick = {navController.navigate(NavigationItem.Fridge.route)}) {
+            IconButton(
+                modifier = Modifier.testTag("nav_fridge"),
+                onClick = {navController.navigate(NavigationItem.Fridge.route)}) {
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = "What's in my Fridge",
                     tint = if (currentSelection == NavigationItem.Fridge.route) iconSelectedColor else Color.Black
                 )
             }
-            IconButton(onClick = {navController.navigate(NavigationItem.Ingredients.route)}) {
+            IconButton(
+                modifier = Modifier.testTag("nav_ingredients"),
+                onClick = {navController.navigate(NavigationItem.Ingredients.route)}) {
                 Icon(
                     imageVector = Icons.Default.Apps,
                     contentDescription = "Ingredients",
                     tint = if (currentSelection == NavigationItem.Ingredients.route) iconSelectedColor else Color.Black
                 )
             }
-            IconButton(onClick = {navController.navigate(NavigationItem.Recipes.route)}) {
+            IconButton(
+                modifier = Modifier.testTag("nav_recipes"),
+                onClick = {navController.navigate(NavigationItem.Recipes.route)}) {
                 Icon(
                     imageVector = Icons.Default.Book,
                     contentDescription = "Recipes",

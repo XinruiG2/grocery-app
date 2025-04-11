@@ -58,14 +58,15 @@ fun ExpandedRecipeCard(recipe: RecipeItem, onBack: () -> Unit) {
             },
             backgroundColor = Color.Black,
             contentColor = Color.White,
-            elevation = 4.dp
+            elevation = 4.dp,
+            modifier = Modifier.testTag("topBar")
         )
 
         GlideImage(
             model = recipe.imageUrl,
             contentDescription = recipe.name,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth().height(300.dp),
+            modifier = Modifier.fillMaxWidth().height(300.dp).testTag("image"),
         )
 
         Column(modifier = Modifier
@@ -73,17 +74,27 @@ fun ExpandedRecipeCard(recipe: RecipeItem, onBack: () -> Unit) {
             .padding(horizontal = 15.dp)) {
             Spacer(modifier = Modifier.height(15.dp))
 
-            Text(text = recipe.name, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = recipe.name,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.testTag("name")
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Ingredients:", fontSize = 26.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                "Ingredients:",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.testTag("ingredientsHeader")
+            )
             val ingredientList = recipe.ingredients.split(",").map { it.trim().capitalize() }
 
             Spacer(modifier = Modifier.height(5.dp))
 
             ingredientList.forEach { ingredient ->
-                Text("• $ingredient", fontSize = 18.sp)
+                Text("• $ingredient", fontSize = 18.sp, modifier = Modifier.testTag("ingredient"))
             }
 
             Spacer(modifier = Modifier.height(15.dp))

@@ -5,19 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="IngredientItemUiTest">
+      <SelectionState runConfigName="FridgeItemUiTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="GroceryListScreenUiTest">
+      <SelectionState runConfigName="FooterNavigationUiTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testGroceryDialog()">
+      <SelectionState runConfigName="testNavigation()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="clickingDialogAdd()">
+      <SelectionState runConfigName="testCardElementsExist()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="FridgeScreenUiTest">
+      <SelectionState runConfigName="ExpandedRecipeCardUiTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
