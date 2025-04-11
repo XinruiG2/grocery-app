@@ -5,28 +5,43 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
+import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
+import com.neu.mobileapplicationdevelopment202430.model.FridgeVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.GroceryVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
 import com.neu.mobileapplicationdevelopment202430.model.ReminderItem
+import com.neu.mobileapplicationdevelopment202430.model.ReminderVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.UserInformation
+import com.neu.mobileapplicationdevelopment202430.viewmodel.FridgeVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.GroceryVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.RemindersVM
 
 @Composable
 fun RemindersScreen(navController: NavHostController) {
-    var reminders by remember {
-        mutableStateOf(
-            listOf(
-                ReminderItem("Apple",  "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg", 2),
-                ReminderItem("Egg", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg", 3),
-                ReminderItem("Pasta", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg", 10)
-            )
-        )
+    val context = LocalContext.current
+    val userPreferences = UserInformation(context)
+    val userId = userPreferences.getUserId()
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
+    val remindersVM: RemindersVM = viewModel(factory = ReminderVMCreator(foodRepository, userId))
+    val reminders by remindersVM.reminders.observeAsState(emptyList())
+    val isLoading by remindersVM.isLoading.observeAsState()
+    val errorMessage by remindersVM.errorMessage.observeAsState()
+
+    LaunchedEffect(Unit) {
+        remindersVM.loadReminderItems()
     }
 
     Box(
@@ -57,9 +72,28 @@ fun RemindersScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(reminders) { reminder ->
-                    ReminderItemCard(item = reminder)
+            if (isLoading == true) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            } else if (errorMessage != null) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = errorMessage!!,
+                        color = Color.Black,
+                        fontSize = 22.sp,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(reminders ?: emptyList()) { reminder ->
+                        ReminderItemCard(item = reminder)
+                    }
                 }
             }
         }

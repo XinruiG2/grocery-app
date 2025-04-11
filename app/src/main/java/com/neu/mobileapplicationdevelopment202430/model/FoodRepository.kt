@@ -108,4 +108,161 @@ class FoodRepository(private val foodDao: FoodDao, private val context: Context)
         }
     }
 
+    suspend fun getUserInformationFromApi(userId: Int): FullUserEntity {
+        Log.e("FoodRepository", "Getting user info...")
+        val response = MyRetrofitBuilder.getApiService().getStoredUserData(userId)
+        Log.e("FoodRepository", response.toString())
+        if (response.isSuccessful) {
+            Log.e("FoodRepository", "In successful")
+            return response.body() ?: throw Exception("User not found")
+        } else {
+            response.errorBody()?.let {
+                Log.e("FoodRepository", "Error Body: ${it.string()}")
+            }
+            Log.e("FoodRepository", "Error: ${response.message()}")
+            throw Exception("Error: ${response.message()}")
+        }
+    }
+
+    suspend fun getFridgeItemsFromDatabase(): List<FridgeItem>? {
+        try {
+            val fridgeEntities = foodDao.getAllFridgeItems().firstOrNull()
+            Log.d("Food Repository", "Fetched: $fridgeEntities")
+
+            if (fridgeEntities.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return fridgeEntities.map { it.toFridgeItem() }
+        } catch (e: Exception) {
+            Log.e("Food Repository", "Error: ${e.message}")
+            return emptyList()
+        }
+    }
+
+    suspend fun saveFridgeItemsToDatabase(fridgeItems: List<FridgeItem>) {
+        val entities = fridgeItems.map { it.toEntity() }
+        foodDao.insertFridgeItems(entities)
+    }
+
+    suspend fun updateFridgeItemQuantity(userId: Int, name: String, quantity: Int) {
+        Log.e("FoodRepository", "Update given information: ${userId} ${name} ${quantity} ")
+
+        try {
+            val response = MyRetrofitBuilder.getApiService().updateFridgeItemForUser(
+                FridgeItemUpdateForUserRequest(userId, name, quantity)
+            )
+            if (response.isSuccessful) {
+                foodDao.updateQuantityByName(name, quantity)
+                Log.d("FoodRepository", "Fridge Updated: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Update Failed: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}\"")
+        }
+    }
+
+    suspend fun updateGroceryItemQuantity(userId: Int, name: String, quantity: Int) {
+        try {
+            val response = MyRetrofitBuilder.getApiService().updateGroceryItemForUser(
+                GroceryItemUpdateForUserRequest(userId, name, quantity)
+            )
+            if (response.isSuccessful) {
+                foodDao.updateQuantityByNameGroceries(name, quantity)
+                Log.d("FoodRepository", "Grocery Updated: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Update Failed: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}\"")
+        }
+    }
+
+    suspend fun addGroceryItem(userId: Int, groceryItem: GroceryListItem) {
+        try {
+            val response = MyRetrofitBuilder.getApiService().addToGroceryList(userId, groceryItem)
+            if (response.isSuccessful) {
+                foodDao.insertGroceryItem(groceryItem.toEntity())
+                Log.d("FoodRepository", "GI added successfully: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Failed to add GI: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}")
+        }
+    }
+
+    suspend fun deleteGroceryItem(userId: Int, groceryItem: GroceryListItem) {
+        try {
+            val response = MyRetrofitBuilder.getApiService().deleteFromGroceryList(userId, groceryItem.name, groceryItem.quantity)
+            if (response.isSuccessful) {
+                foodDao.deleteGroceryItem(groceryItem.name)
+                Log.d("FoodRepository", "GI deleted successfully: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Failed to delete GI: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}")
+        }
+    }
+
+    suspend fun saveGroceryItemsToDatabase(groceryItems: List<GroceryListItem>) {
+        val entities = groceryItems.map { it.toEntity() }
+        foodDao.insertGroceryItems(entities)
+    }
+
+    suspend fun getGroceryItemsFromDatabase(): List<GroceryListItem>? {
+        try {
+            val groceryEntities = foodDao.getAllGroceryItems().firstOrNull()
+
+            if (groceryEntities.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return groceryEntities.map { it.toGroceryItem() }
+        } catch (e: Exception) {
+            Log.e("Food Repository", "Error: ${e.message}")
+            return emptyList()
+        }
+    }
+
+    suspend fun getByName(name: String) = foodDao.getByName(name)
+
+    suspend fun addFridgeItem(userId: Int, fridgeItem: FridgeItem) {
+        Log.d("FoodRepository", "given: ${fridgeItem.toString()}")
+        try {
+            val response = MyRetrofitBuilder.getApiService().addToFridgeItems(userId, fridgeItem)
+            if (response.isSuccessful) {
+                foodDao.insertFridgeItem(fridgeItem.toEntity())
+                Log.d("FoodRepository", "FI added successfully: ${response.body()?.message}")
+            } else {
+                Log.e("FoodRepository", "Failed to add FI: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("FoodRepository", "Error: ${e.message}")
+        }
+    }
+
+    suspend fun saveRemindersToDatabase(reminders: List<ReminderItem>) {
+        val entities = reminders.map { it.toEntity() }
+        foodDao.insertReminders(entities)
+    }
+
+    suspend fun getRemindersFromDatabase(): List<ReminderItem>? {
+        try {
+            val reminderEntities = foodDao.getAllReminders().firstOrNull()
+            Log.d("Food Repository", "Fetched: $reminderEntities")
+
+            if (reminderEntities.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return reminderEntities.map { it.toReminderItem() }
+        } catch (e: Exception) {
+            Log.e("Food Repository", "Error: ${e.message}")
+            return emptyList()
+        }
+    }
+
 }

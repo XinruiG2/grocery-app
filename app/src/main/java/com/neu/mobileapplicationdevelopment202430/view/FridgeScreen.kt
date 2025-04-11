@@ -13,19 +13,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.util.Log
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
+import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 import com.neu.mobileapplicationdevelopment202430.model.FridgeItem
-import com.neu.mobileapplicationdevelopment202430.model.FridgeRepository
 import com.neu.mobileapplicationdevelopment202430.model.FridgeVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.GroceryVMCreator
+import com.neu.mobileapplicationdevelopment202430.model.RecipesVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.UserInformation
 import com.neu.mobileapplicationdevelopment202430.viewmodel.FridgeVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.GroceryVM
+import com.neu.mobileapplicationdevelopment202430.viewmodel.RecipeVM
 
 @Composable
 fun FridgeScreen(navController: NavHostController) {
-
 //    var items by remember {
 //        mutableStateOf(
 //            listOf(
@@ -37,14 +41,21 @@ fun FridgeScreen(navController: NavHostController) {
 //            )
 //        )
 //    }
+
     val context = LocalContext.current
-    val db = FoodDatabase.getDatabase(context)
-    val fridgeVM: FridgeVM = viewModel(
-        factory = FridgeVMCreator(FridgeRepository(db.fridgeDao()))
-    )
-    val items by fridgeVM.fridgeItems.collectAsState()
     val userPreferences = UserInformation(context)
     val userId = userPreferences.getUserId()
+    val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
+    val groceryVM: GroceryVM = viewModel(factory = GroceryVMCreator(foodRepository, userId))
+    val fridgeVM: FridgeVM = viewModel(factory = FridgeVMCreator(foodRepository, userId, groceryVM))
+    val fridgeItems by fridgeVM.fridgeItems.observeAsState(emptyList())
+    val isLoading by fridgeVM.isLoading.observeAsState()
+    val errorMessage by fridgeVM.errorMessage.observeAsState()
+
+    LaunchedEffect(Unit) {
+        fridgeVM.loadFridgeItems()
+    }
+
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -80,22 +91,36 @@ fun FridgeScreen(navController: NavHostController) {
 //                fontWeight = FontWeight.Bold
 //            )
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(items) { item ->
-                    FridgeItemCard(
-                        item = item,
-                        updateQuantity = { newQuantity ->
-                            fridgeVM.updateQuantity(item.name, newQuantity)
-
-                            Log.d("Fridge Mapping", items.joinToString { it.name + ": " + it.quantity })
-
+            if (isLoading == true) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            } else if (errorMessage != null) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = errorMessage!!,
+                        color = Color.Black,
+                        fontSize = 22.sp,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(fridgeItems ?: emptyList()) { item ->
+                        FridgeItemCard(
+                            item = item,
+                            updateQuantity = { newQuantity ->
+                                fridgeVM.updateItemQuantity(userId, item.name, newQuantity)
 //                            if (newQuantity == 0) {
 //                                items = items.filterNot { it.name == item.name }
 //                            }
-
-                            Log.d("Fridge Removed", items.joinToString { it.name + ": " + it.quantity })
-                        }
-                    )
+                            }
+                        )
+                    }
                 }
             }
 

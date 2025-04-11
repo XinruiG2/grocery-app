@@ -13,8 +13,4 @@ class UserInformation(context: Context) {
     fun getUserId(): Int {
         return sharedPreferences.getInt("user_id", -1)
     }
-
-    fun clearUserId() {
-        sharedPreferences.edit().remove("user_id").apply()
-    }
 }

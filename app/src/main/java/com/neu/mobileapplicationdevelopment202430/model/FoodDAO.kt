@@ -9,10 +9,6 @@ import com.neu.mobileapplicationdevelopment202430.model.IngredientEntity
 
 @Dao
 interface FoodDao {
-    // smth for inserting grocery items --> after we figure out user thing?
-
-    // also smth for what's in my fridge maybe
-
     @Query("SELECT * FROM ingredients")
     fun getAllIngredients(): Flow<List<IngredientEntity>>
 
@@ -24,4 +20,40 @@ interface FoodDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipes(recipes: List<RecipeEntity>)
+
+    @Query("SELECT * FROM groceryItems")
+    fun getAllGroceryItems(): Flow<List<GroceryListEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGroceryItems(groceryItems: List<GroceryListEntity>)
+
+    @Query("SELECT * FROM fridgeItems")
+    fun getAllFridgeItems(): Flow<List<FridgeEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFridgeItems(fridgeItems: List<FridgeEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFridgeItem(fridgeItem: FridgeEntity)
+
+    @Query("UPDATE fridgeItems SET quantity = :quantity WHERE name = :name")
+    suspend fun updateQuantityByName(name: String, quantity: Int)
+
+    @Query("UPDATE groceryItems SET quantity = :quantity WHERE name = :name")
+    suspend fun updateQuantityByNameGroceries(name: String, quantity: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGroceryItem(groceryItem: GroceryListEntity)
+
+    @Query("DELETE FROM groceryItems WHERE name = :name")
+    suspend fun deleteGroceryItem(name: String)
+
+    @Query("SELECT * FROM fridgeItems WHERE name = :name LIMIT 1")
+    suspend fun getByName(name: String): FridgeEntity?
+
+    @Query("SELECT * FROM reminders")
+    fun getAllReminders(): Flow<List<ReminderEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReminders(reminders: List<ReminderEntity>)
 }
