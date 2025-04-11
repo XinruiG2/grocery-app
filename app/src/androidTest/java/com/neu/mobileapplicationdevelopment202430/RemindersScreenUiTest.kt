@@ -5,6 +5,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.neu.mobileapplicationdevelopment202430.view.RemindersScreen
@@ -14,9 +15,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class WaitListUiTest {
+class RemindersScreenUiTest {
     @get: Rule
     val composeTestRule = createComposeRule()
+
     @Before
     fun setUp() {
         composeTestRule.setContent {
@@ -25,6 +27,7 @@ class WaitListUiTest {
             }
         }
     }
+
     @Test
     fun testTitleIsDisplayed() {
         composeTestRule.onNodeWithTag("title").assertExists()
@@ -45,25 +48,34 @@ class WaitListUiTest {
         composeTestRule.onNodeWithTag("error").assertDoesNotExist()
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testRemindersListOrErrorAppearsAfterLoading() {
         composeTestRule.onNodeWithTag("loading").assertExists()
 
         composeTestRule.waitUntil(
-            timeoutMillis = 5_000,
+            timeoutMillis = 5000,
             condition = {
                 composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isEmpty()
             }
         )
 
-        val errorMessageNode = composeTestRule.onAllNodesWithTag("error")
-        if (errorMessageNode.fetchSemanticsNodes().isNotEmpty()) {
-            composeTestRule.onNodeWithTag("error").assertExists()
-        } else {
-            composeTestRule.waitUntilAtLeastOneExists(hasTestTag("remindersList"))
-            composeTestRule.onNodeWithTag("remindersList").assertExists()
-        }
+        val listExists = composeTestRule.onAllNodesWithTag("remindersList").fetchSemanticsNodes().isNotEmpty()
+        val errorExists = composeTestRule.onAllNodesWithTag("error").fetchSemanticsNodes().isNotEmpty()
+        val emptyExists = composeTestRule.onAllNodesWithTag("emptyReminders").fetchSemanticsNodes().isNotEmpty()
+
+        assert(listExists || errorExists || emptyExists)
+    }
+
+    @Test
+    fun testFooterNavigationIsDisplayed() {
+        composeTestRule.waitUntil(
+            timeoutMillis = 5000,
+            condition = {
+                composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isEmpty()
+            }
+        )
+
+        composeTestRule.onNodeWithTag("footerNav").assertExists()
     }
 
 }

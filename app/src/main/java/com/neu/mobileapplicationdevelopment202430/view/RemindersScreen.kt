@@ -88,13 +88,22 @@ fun RemindersScreen(navController: NavHostController) {
                     )
                 }
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize().testTag("remindersList")) {
-                    items(reminders ?: emptyList()) { reminder ->
-                        ReminderItemCard(item = reminder)
+                if (reminders.isNullOrEmpty()) {
+                    Text(
+                        text = "No reminders available",
+                        modifier = Modifier.testTag("emptyReminders"),
+                        color = Color.Black,
+                        fontSize = 22.sp
+                    )
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize().testTag("remindersList")) {
+                        items(reminders ?: emptyList()) { reminder ->
+                            ReminderItemCard(item = reminder)
+                        }
                     }
                 }
             }
         }
-        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter))
+        FooterNavigation(navController, modifier = Modifier.align(Alignment.BottomCenter).testTag("footerNav"))
     }
 }
