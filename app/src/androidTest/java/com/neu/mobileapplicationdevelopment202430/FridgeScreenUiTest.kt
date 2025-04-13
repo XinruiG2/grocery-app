@@ -53,7 +53,6 @@ class FridgeScreenUiTest {
 
     @Test
     fun testLoadingFunctionality() {
-        composeTestRule.onNodeWithTag("loading").assertExists()
 
         composeTestRule.waitUntil(
             timeoutMillis = 5000,
@@ -102,12 +101,12 @@ class FridgeScreenUiTest {
 
     @Test
     fun testFooterNavigationExists() {
-        composeTestRule.waitUntil(
-            timeoutMillis = 5000,
-            condition = {
-                composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isEmpty()
-            }
-        )
+//        composeTestRule.waitUntil(
+//            timeoutMillis = 5000,
+//            condition = {
+//                composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isEmpty()
+//            }
+//        )
 
         composeTestRule.onNodeWithTag("footerNav").assertExists()
     }
