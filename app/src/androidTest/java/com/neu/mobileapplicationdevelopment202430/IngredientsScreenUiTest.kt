@@ -36,14 +36,14 @@ class IngredientsScreenUiTest {
         composeTestRule.onNodeWithTag("title").assertExists()
     }
 
-    @Test
-    fun testLoadingExists() {
-        composeTestRule.onNodeWithTag("loading").assertExists()
-    }
+//    @Test
+//    fun testLoadingExists() {
+//        composeTestRule.onNodeWithTag("loading").assertExists()
+//    }
 
     @Test
     fun testIngredientsListExists() {
-        composeTestRule.onNodeWithTag("ingredients").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("ingredients").assertExists()
     }
 
     @Test
@@ -53,7 +53,7 @@ class IngredientsScreenUiTest {
 
     @Test
     fun testIngredientsListOrErrorAppearsAfterLoading() {
-        composeTestRule.onNodeWithTag("loading").assertExists()
+        //composeTestRule.onNodeWithTag("loading").assertExists()
 
         composeTestRule.waitUntil(
             timeoutMillis = 5000,

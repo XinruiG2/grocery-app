@@ -1,4 +1,6 @@
 @file:Suppress("UnstableApiUsage")
+import org.gradle.testing.jacoco.tasks.JacocoReport
+
 
 plugins {
   id("com.android.application")
@@ -6,8 +8,8 @@ plugins {
   id("androidx.navigation.safeargs.kotlin")
   id("kotlin-kapt")
   id("com.google.devtools.ksp") version "1.9.22-1.0.17"
+  jacoco
 }
-
 android {
   namespace = "com.neu.mobileapplicationdevelopment202430"
   compileSdk = 34
@@ -47,6 +49,49 @@ android {
   buildToolsVersion = "34.0.0"
   buildFeatures { viewBinding = true }
 }
+
+tasks.register<JacocoReport>("instrumentationCodeCoverage") {
+  group = "Reporting"
+  description = "Generate code coverage report for instrumentation tests using Jacoco."
+
+  reports {
+    html.required.set(true)
+    xml.required.set(true)
+  }
+
+  val classDirs = fileTree("$buildDir/tmp/kotlin-classes/debug") {
+    exclude(
+      "**/R.class",
+      "**/R$*.class",
+      "**/BuildConfig.*",
+      "**/Manifest*.*",
+      "**/*Test*.*",
+      "**/android/**/*.*",
+      "**/androidx/**/*.*",
+      "**/airbnb/**/*.*",
+      "**/hilt/**/*.*",
+      "**/dagger/**/*.*",
+      "**/di/**/*.*",
+      "**/*Screen*.*" // optionally exclude screens
+    )
+  }
+
+  classDirectories.setFrom(classDirs)
+
+  sourceDirectories.setFrom(
+    files(
+      "$projectDir/src/main/java",
+      "$projectDir/src/main/kotlin"
+    )
+  )
+
+  executionData.setFrom(
+    fileTree(buildDir) {
+      include("outputs/code_coverage/**/*.ec")
+    }
+  )
+}
+
 
 dependencies {
   implementation("androidx.fragment:fragment-ktx:1.8.2")

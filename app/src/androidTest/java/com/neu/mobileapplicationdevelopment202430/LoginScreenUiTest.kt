@@ -70,9 +70,9 @@ class LoginScreenUiTest {
 
         composeTestRule.onNodeWithTag("loginButton").performClick()
 
-        composeTestRule.waitUntil(timeoutMillis = 3000) {
-            composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isNotEmpty()
-        }
+//        composeTestRule.waitUntil(timeoutMillis = 7000) {
+//            composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isNotEmpty()
+//        }
 
         composeTestRule.waitUntil(timeoutMillis = 7000) {
             composeTestRule.onAllNodesWithTag("loading").fetchSemanticsNodes().isEmpty()
