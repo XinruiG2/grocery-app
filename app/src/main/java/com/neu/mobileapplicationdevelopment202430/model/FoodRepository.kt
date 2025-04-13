@@ -20,11 +20,10 @@ class FoodRepository(private val foodDao: FoodDao, private val context: Context)
             //Log.d("FoodRepository Ingredients", "Response Body: ${response.body()}")
             return response.body()?.map { it.toIngredient() } ?: emptyList()
         } else {
-            response.errorBody()?.let {
-                //Log.e("FoodRepository", "Error Body: ${it.string()}")
-            }
+            // Capture the error message from the response and throw it
+            val errorMessage = response.errorBody()?.string() ?: "Unknown error"
+            throw Exception("Error: $errorMessage")
            // Log.e("FoodRepository", "Error: ${response.message()}")
-            throw Exception("Error: ${response.message()}")
         }
     }
 
