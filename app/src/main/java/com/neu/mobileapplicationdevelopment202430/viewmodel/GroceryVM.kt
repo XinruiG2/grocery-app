@@ -38,7 +38,7 @@ class GroceryVM(private val repository: FoodRepository, private val userId : Int
                     }
                 }
             } catch (e: Exception) {
-                Log.e("GroceryVM", "FOUND AN ERROR!: ${e.message}")
+                //Log.e("GroceryVM", "FOUND AN ERROR!: ${e.message}")
 
                 val storedGroceryItems = repository.getGroceryItemsFromDatabase()
                 withContext(Dispatchers.Main) {
@@ -74,7 +74,7 @@ class GroceryVM(private val repository: FoodRepository, private val userId : Int
                     repository.addGroceryItem(userId, groceryItemToAdd)
 
                     val updatedGroceryItems = repository.getGroceryItemsFromDatabase()?.distinctBy { it.name }
-                    Log.d("Grocery VM", updatedGroceryItems.toString())
+                    //Log.d("Grocery VM", updatedGroceryItems.toString())
                     withContext(Dispatchers.Main) {
                         _groceryItems.value = updatedGroceryItems
                     }
@@ -87,7 +87,7 @@ class GroceryVM(private val repository: FoodRepository, private val userId : Int
                     }
                 }
             } else {
-                Log.d("Grocery VM", "Item not found")
+               // Log.d("Grocery VM", "Item not found")
             }
         }
     }
@@ -97,7 +97,7 @@ class GroceryVM(private val repository: FoodRepository, private val userId : Int
             repository.deleteGroceryItem(userId, item)
 
             val updatedGroceryItems = repository.getGroceryItemsFromDatabase()?.distinctBy { it.name }
-            Log.d("Grocery VM", updatedGroceryItems.toString())
+           // Log.d("Grocery VM", updatedGroceryItems.toString())
             withContext(Dispatchers.Main) {
                 _groceryItems.value = updatedGroceryItems
             }
