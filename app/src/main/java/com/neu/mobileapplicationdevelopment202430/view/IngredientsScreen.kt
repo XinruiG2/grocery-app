@@ -22,7 +22,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.neu.mobileapplicationdevelopment202430.model.FoodDatabase
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
-import com.neu.mobileapplicationdevelopment202430.model.FridgeRepository
 import com.neu.mobileapplicationdevelopment202430.model.FridgeVMCreator
 import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
 import com.neu.mobileapplicationdevelopment202430.model.IngredientsVMCreator
