@@ -8,6 +8,21 @@ plugins {
   id("com.google.devtools.ksp") version "1.9.22-1.0.17"
 }
 
+// Add this block outside the android { } block
+configurations.all {
+  resolutionStrategy {
+    // Force MockK and its agent to the desired version for ALL configurations
+    // This helps override potentially conflicting transitive dependencies.
+    force ("io.mockk:mockk:1.13.10")
+    force ("io.mockk:mockk-agent-jvm:1.13.10")
+
+    // MockK 1.13.10 uses Byte Buddy 1.14.9 - Let's force that too
+    // Check MockK releases page if needed for exact BB version in future
+    force ("net.bytebuddy:byte-buddy:1.14.9")
+    force ("net.bytebuddy:byte-buddy-agent:1.14.9")
+  }
+}
+
 android {
   namespace = "com.neu.mobileapplicationdevelopment202430"
   compileSdk = 34
@@ -70,6 +85,10 @@ dependencies {
   testImplementation ("io.mockk:mockk:1.12.0")
 
 
+
+
+
+
   // jetpack
   val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
   implementation(composeBom)
@@ -102,7 +121,7 @@ dependencies {
   ksp("androidx.room:room-compiler:2.6.1")
   annotationProcessor("androidx.room:room-compiler:$room_version")
 
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
   implementation("com.squareup.retrofit2:retrofit:2.9.0")
