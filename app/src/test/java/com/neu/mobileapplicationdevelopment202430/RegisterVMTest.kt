@@ -89,4 +89,40 @@ class RegisterVMTest {
         viewModel.resetRegisterStatus()
         assertNull(viewModel.signupStatus.value)
     }
+
+    @Test
+    fun signupStatus_isNullInitially() {
+        // Assert that signupStatus is null when view model is initialized
+        assertNull(viewModel.signupStatus.value)
+    }
+
+    @Test
+    fun signupStatus_isNullAfterReset() {
+        // Reset the signup status
+        viewModel.resetRegisterStatus()
+
+        // Assert that signupStatus is reset to null
+        assertNull(viewModel.signupStatus.value)
+    }
+
+    @Test
+    fun errorMessage_isSet_whenUserAlreadyExists() = runTest {
+        val username = "existinguser"
+        val password = "password"
+        val response = SignupResponse("user already exists", user_id = null)
+
+        coEvery { repository.signup(username, password) } returns response
+
+        viewModel.validSignUpOrNot(username, password)
+        advanceUntilIdle()
+
+        // Assert that the error message is set when user already exists
+        val errorMessage = viewModel.errorMessage.getOrAwaitValue()
+        assertEquals("user already exists", errorMessage)
+    }
+
+
+
+
+
 }
