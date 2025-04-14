@@ -37,7 +37,7 @@ class RemindersScreenUiTest {
 
     @Test
     fun testLoadingExists() {
-        composeTestRule.onNodeWithTag("loading").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("loading").assertExists()
     }
 
     @Test

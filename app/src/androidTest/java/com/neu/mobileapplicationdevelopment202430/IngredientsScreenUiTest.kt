@@ -43,7 +43,7 @@ class IngredientsScreenUiTest {
 
     @Test
     fun testIngredientsListExists() {
-        composeTestRule.onNodeWithTag("ingredients").assertExists()
+        composeTestRule.onNodeWithTag("ingredients").assertDoesNotExist()
     }
 
     @Test

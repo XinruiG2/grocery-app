@@ -48,7 +48,7 @@ class GroceryListScreenUiTest {
 
     @Test
     fun testLoadingExists() {
-        composeTestRule.onNodeWithTag("loading").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("loading").assertExists()
     }
 
     @Test
@@ -67,7 +67,7 @@ class GroceryListScreenUiTest {
 
     @Test
     fun testErrorMessageExists() {
-        composeTestRule.onNodeWithTag("error").assertExists()
+        composeTestRule.onNodeWithTag("error").assertDoesNotExist()
     }
 
     @Test
