@@ -17,14 +17,15 @@ class GroceryVMTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private lateinit var repository: FoodRepository
     private lateinit var viewModel: GroceryVM
-    private val testDispatcher = StandardTestDispatcher()
     private val testUserId = 123
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
         repository = mockk(relaxed = true)
         viewModel = GroceryVM(repository, testUserId)
 
@@ -35,22 +36,19 @@ class GroceryVMTest {
 
     @After
     fun tearDown() {
-        Dispatchers.resetMain()
         unmockkAll()
+        clearMocks(repository) // Clear mocks to ensure no shared state between tests
     }
-
 
     @Test
     fun addGroceryItem_addsNewItemWhenNotPresent() = runTest {
         val existingItems = listOf(GroceryListItem("Milk", 1))
         coEvery { repository.getGroceryItemsFromDatabase() } returns existingItems
         coEvery { repository.addGroceryItem(testUserId, any()) } just Runs
-        coEvery {
-            repository.getGroceryItemsFromDatabase()
-        } returns existingItems + GroceryListItem("Eggs", 6)
+        coEvery { repository.getGroceryItemsFromDatabase() } returns existingItems + GroceryListItem("Eggs", 6)
 
         viewModel.addGroceryItem(testUserId, "Eggs", 6)
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         val result = viewModel.groceryItems.getOrAwaitValue()
         assertTrue(result!!.any { it.name == "Eggs" && it.quantity == 6 })
@@ -64,7 +62,7 @@ class GroceryVMTest {
         coEvery { repository.getGroceryItemsFromDatabase() } returns listOf(GroceryListItem("Milk", 5))
 
         viewModel.addGroceryItem(testUserId, "Milk", 2)
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         val result = viewModel.groceryItems.getOrAwaitValue()
         assertEquals(5, result!!.first { it.name == "Milk" }.quantity)
@@ -77,7 +75,7 @@ class GroceryVMTest {
         coEvery { repository.getGroceryItemsFromDatabase() } returns emptyList()
 
         viewModel.deleteGroceryItem(testUserId, item)
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         val result = viewModel.groceryItems.getOrAwaitValue()
         assertTrue(result!!.isEmpty())
@@ -89,7 +87,7 @@ class GroceryVMTest {
         coEvery { repository.getGroceryItemsFromDatabase() } returns emptyList()
 
         viewModel.loadGroceryItems()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         val error = viewModel.errorMessage.getOrAwaitValue()
         assertEquals(null, error)
@@ -107,76 +105,11 @@ class GroceryVMTest {
         // Trigger load (no API call will be made because of mock data)
         viewModel.loadGroceryItems()
 
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         // Assert that groceryItems LiveData was set to an empty list
         assertTrue(groceryItemsObserver.isNotEmpty())
         assertTrue(groceryItemsObserver.last().isNullOrEmpty())
     }
-
-    @Test
-    fun groceryItems_isUpdatedAfterItemDeletion() = runTest {
-        val item = GroceryListItem("Milk", 2)
-        val existingItems = listOf(item)
-
-        coEvery { repository.getGroceryItemsFromDatabase() } returns existingItems
-        coEvery { repository.deleteGroceryItem(testUserId, item) } just Runs
-        coEvery { repository.getGroceryItemsFromDatabase() } returns emptyList()
-
-        // Trigger delete operation
-        viewModel.deleteGroceryItem(testUserId, item)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Verify that groceryItems is updated
-        val result = viewModel.groceryItems.getOrAwaitValue()
-        assertTrue(result!!.isEmpty())
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-        @Test
-        fun loadGroceryItems_loadsFromApiWhenDatabaseIsEmpty() = runTest {
-            val mockFullUserEntity = mockk<FullUserEntity>()
-            val fakeEntities = listOf(
-                GroceryListEntity(name = "Milk", quantity = 2),
-                GroceryListEntity(name = "Eggs", quantity = 12)
-            )
-            val expectedItems = fakeEntities.map { it.toGroceryItem() }
-
-            // Mock responses
-            every { mockFullUserEntity.grocery_list } returns fakeEntities
-            coEvery { repository.getUserInformationFromApi(testUserId) } returns mockFullUserEntity
-            coEvery { repository.saveGroceryItemsToDatabase(any()) } just Runs
-
-            // Database is empty initially
-            coEvery { repository.getGroceryItemsFromDatabase() } returns emptyList()
-
-            viewModel.loadGroceryItems()
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val result = viewModel.groceryItems.getOrAwaitValue()
-            assertEquals(expectedItems, result)
-        }
-
-     */
 
 }

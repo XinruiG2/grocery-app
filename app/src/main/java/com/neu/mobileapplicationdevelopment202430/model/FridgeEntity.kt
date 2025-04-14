@@ -9,6 +9,6 @@ data class FridgeEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "dateBought") val dateBought: String,
-    @ColumnInfo(name = "quantity") val quantity: Int,
+    @ColumnInfo(name = "quantity") var quantity: Int,
     @ColumnInfo(name = "imageUrl") val imageUrl: String
 )

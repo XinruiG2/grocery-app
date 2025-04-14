@@ -50,12 +50,15 @@ class FridgeVMTest {
         every { Log.d(any(), any()) } returns 0
         every { Log.e(any(), any<String>()) } returns 0
         every { Log.e(any(), any<String>(), any()) } returns 0 // Overload with Throwable
+        clearMocks(repository)
     }
 
     @After
     fun tearDown() {
         // Dispatcher reset is handled by MainDispatcherRule
-        unmockkStatic(Log::class) // Unmock static Log
+        unmockkStatic(Log::class)
+        unmockkAll()
+        clearMocks(repository, groceryVM)// Unmock static Log
     }
 
 
@@ -122,6 +125,10 @@ class FridgeVMTest {
         coVerify(exactly = 1) { groceryVM.deleteGroceryItem(testUserId, groceryItem) }
         coVerify(exactly = 1) { repository.getFridgeItemsFromDatabase() }
     }
+
+
+
+
 
     @Test
     fun `addToOrUpdateGroceryList handles empty input gracefully`() = mainDispatcherRule.testScope.runTest {
@@ -207,3 +214,6 @@ class FridgeVMTest {
     }
 
 }
+
+
+

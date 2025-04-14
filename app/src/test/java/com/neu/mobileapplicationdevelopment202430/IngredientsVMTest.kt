@@ -1,8 +1,10 @@
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.neu.mobileapplicationdevelopment202430.MainDispatcherRule
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
 import com.neu.mobileapplicationdevelopment202430.viewmodel.IngredientsVM
 import io.mockk.Runs
+import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.just
 import io.mockk.mockk
@@ -26,21 +28,23 @@ class IngredientsVMTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule() // Use the MainDispatcherRule here
+
     private lateinit var repository: FoodRepository
     private lateinit var viewModel: IngredientsVM
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
         repository = mockk(relaxed = true)
         viewModel = IngredientsVM(
             repository = repository,
             ioDispatcher = testDispatcher,
             mainDispatcher = testDispatcher
         )
+        clearMocks(repository)
     }
-
 
     @After
     fun tearDown() {
@@ -59,7 +63,7 @@ class IngredientsVMTest {
         coEvery { repository.saveIngredientsToDatabase(any()) } just Runs
 
         viewModel.loadIngredients()
-        testScheduler.advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         assertEquals(apiIngredients, viewModel.ingredients.value)
         assertEquals(false, viewModel.isLoading.value)
@@ -76,7 +80,7 @@ class IngredientsVMTest {
         coEvery { repository.getIngredientsFromDatabase() } returns dbIngredients
 
         viewModel.loadIngredients()
-        testScheduler.advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         assertEquals(dbIngredients, viewModel.ingredients.value)
         assertEquals(false, viewModel.isLoading.value)
@@ -89,7 +93,7 @@ class IngredientsVMTest {
         coEvery { repository.getIngredientsFromDatabase() } returns emptyList()
 
         viewModel.loadIngredients()
-        testScheduler.advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         assertEquals(emptyList<IngredientItem>(), viewModel.ingredients.value)
         assertEquals(false, viewModel.isLoading.value)
