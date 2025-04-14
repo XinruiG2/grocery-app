@@ -28,7 +28,7 @@ class LoginVM(private val repository: FoodRepository) : ViewModel() {
                 val loginResponse = repository.login(username, password)
                 if (loginResponse != null && loginResponse.message == "login successful") {
                     val userId = loginResponse.user_id
-                    Log.d("LoginVM", "Login successful. User ID: $userId")
+//                    Log.d("LoginVM", "Login successful. User ID: $userId")
                     withContext(Dispatchers.Main) {
                         _loginStatus.value = true
                     }

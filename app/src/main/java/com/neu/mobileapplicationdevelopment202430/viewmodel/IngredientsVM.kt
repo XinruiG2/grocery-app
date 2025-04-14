@@ -14,8 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import android.util.Log
 import kotlinx.coroutines.withContext
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
+import kotlinx.coroutines.CoroutineDispatcher
 
-class IngredientsVM(private val repository: FoodRepository) : ViewModel() {
+class IngredientsVM(private val repository: FoodRepository,
+                    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+                    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main) : ViewModel() {
     private val _ingredients = MutableLiveData<List<IngredientItem>?>(emptyList())
     val ingredients: LiveData<List<IngredientItem>?> get() = _ingredients
     private val _isLoading = MutableLiveData<Boolean>()
@@ -27,20 +30,20 @@ class IngredientsVM(private val repository: FoodRepository) : ViewModel() {
         _isLoading.value = true
         _errorMessage.value = null
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             try {
                 val apiIngredients = repository.getIngredientsFromApi()
                 if (apiIngredients.isNotEmpty()) {
                     repository.saveIngredientsToDatabase(apiIngredients)
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _ingredients.value = apiIngredients
                     }
                 }
             } catch (e: Exception) {
-//                Log.e("IngredientsVM", "FOUND AN ERROR!: ${e.message}")
+                //Log.e("IngredientsVM", "FOUND AN ERROR!: ${e.message}")
 
                 val storedIngredients = repository.getIngredientsFromDatabase()
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     if (!storedIngredients.isNullOrEmpty()) {
                         _ingredients.value = storedIngredients
                     } else {
@@ -49,7 +52,7 @@ class IngredientsVM(private val repository: FoodRepository) : ViewModel() {
                     }
                 }
             } finally {
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     _isLoading.value = false
                 }
             }
