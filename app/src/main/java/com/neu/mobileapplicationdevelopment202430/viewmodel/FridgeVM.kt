@@ -13,6 +13,7 @@ import com.neu.mobileapplicationdevelopment202430.model.IngredientItem
 import com.neu.mobileapplicationdevelopment202430.model.RecipeItem
 import com.neu.mobileapplicationdevelopment202430.model.toFridgeItem
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
@@ -32,6 +33,7 @@ class FridgeVM(private val repository: FoodRepository, private val userId : Int,
         _errorMessage.value = null
 
         viewModelScope.launch(Dispatchers.IO) {
+            delay(500)
             try {
                 val apiUserInformation = repository.getUserInformationFromApi(userId)
                 if (apiUserInformation != null) {

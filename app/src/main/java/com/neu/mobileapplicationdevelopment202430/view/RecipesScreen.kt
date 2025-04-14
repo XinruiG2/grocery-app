@@ -28,12 +28,6 @@ import com.neu.mobileapplicationdevelopment202430.viewmodel.RecipeVM
 fun RecipesScreen(navController: NavHostController) {
     var searchBarText by remember { mutableStateOf("") }
     var expandRecipe by remember { mutableStateOf<RecipeItem?>(null) }
-//    val recipes = listOf(
-//        RecipeItem("Pasta", "Pasta with tomato sauce.", "pasta, tomato, garlic, basil", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-//        RecipeItem("Omelette", "Veggie omelette with cheese.", "egg, cheese, oil, spinach", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg"),
-//        RecipeItem("Smoothie", "Berry smoothie.", "strawberries, blueberries, banana, milk", "https://i.pinimg.com/736x/4f/6c/c4/4f6cc46e50e7a0ff21c5e0a77423b0b5.jpg")
-//    )
-
     val context = LocalContext.current
     val foodRepository = FoodRepository(FoodDatabase.getDatabase(context).foodDao(), context)
     val recipesVM: RecipeVM = viewModel(factory = RecipesVMCreator(foodRepository))

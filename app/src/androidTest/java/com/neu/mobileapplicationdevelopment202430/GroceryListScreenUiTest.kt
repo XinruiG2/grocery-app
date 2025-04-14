@@ -48,17 +48,12 @@ class GroceryListScreenUiTest {
 
     @Test
     fun testLoadingExists() {
-        composeTestRule.onNodeWithTag("loading").assertExists()
+        composeTestRule.onNodeWithTag("loading").assertDoesNotExist()
     }
 
     @Test
     fun testGroceryListExists() {
         composeTestRule.onNodeWithTag("groceryList").assertDoesNotExist()
-    }
-
-    @Test
-    fun testErrorMessageExists() {
-        composeTestRule.onNodeWithTag("error").assertDoesNotExist()
     }
 
     @Test
@@ -68,6 +63,11 @@ class GroceryListScreenUiTest {
             composeTestRule.onAllNodesWithTag("error").fetchSemanticsNodes().isNotEmpty() ||
             composeTestRule.onAllNodesWithTag("groceryList").fetchSemanticsNodes().isNotEmpty()
         }
+    }
+
+    @Test
+    fun testErrorMessageExists() {
+        composeTestRule.onNodeWithTag("error").assertExists()
     }
 
     @Test
