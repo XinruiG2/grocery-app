@@ -30,11 +30,13 @@ class RegisterVMTest {
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
+        clearMocks(repository)
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        unmockkAll()
     }
 
     @Test
@@ -126,3 +128,5 @@ class RegisterVMTest {
 
 
 }
+
+

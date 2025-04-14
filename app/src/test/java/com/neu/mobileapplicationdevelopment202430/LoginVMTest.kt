@@ -7,11 +7,13 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.neu.mobileapplicationdevelopment202430.model.FoodRepository
 import com.neu.mobileapplicationdevelopment202430.model.LoginResponse
 import com.neu.mobileapplicationdevelopment202430.viewmodel.LoginVM
+import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,12 +47,14 @@ class LoginVMTest {
         repository = mockk()
         // Initialize the ViewModel with the mock repository
         viewModel = LoginVM(repository)
+        clearMocks(repository)
     }
 
     @After
     fun tearDown() {
         // Reset the main dispatcher to avoid affecting other tests
         Dispatchers.resetMain()
+        unmockkAll()
     }
 
     @Test
@@ -116,3 +120,5 @@ class LoginVMTest {
         coVerify(exactly = 1) { repository.login(username, password) }
     }
 }
+
+

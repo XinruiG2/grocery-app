@@ -35,6 +35,7 @@ android {
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
   }
 
   buildTypes {
@@ -43,7 +44,9 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
 
-    debug {}
+    debug {
+
+    }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -52,7 +55,7 @@ android {
   kotlinOptions { jvmTarget = "1.8" }
   buildFeatures {
     compose = true
-    viewBinding = true 
+    viewBinding = true
   }
   composeOptions { kotlinCompilerExtensionVersion = "1.5.8" }
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
@@ -75,14 +78,23 @@ dependencies {
   implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
   implementation("androidx.work:work-runtime-ktx:2.9.1")
   implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-    androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
-    debugImplementation("androidx.fragment:fragment-testing:1.8.2")
+  implementation("androidx.test.ext:junit-ktx:1.2.1")
+  androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+  debugImplementation("androidx.fragment:fragment-testing:1.8.2")
   debugImplementation("androidx.compose.ui:ui-test-manifest")
   androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
   implementation ("com.github.bumptech.glide:glide:4.15.1")
   annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
   testImplementation ("io.mockk:mockk:1.12.0")
+
+  // AndroidX Test libraries
+  testImplementation ("androidx.test:core:1.4.0")
+  testImplementation ("androidx.test.ext:junit:1.1.3")
+  testImplementation ("androidx.test:runner:1.4.0")
+
+  // Unit testing dependencies
+  testImplementation ("junit:junit:4.13.2")
 
 
 
